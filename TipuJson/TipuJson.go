@@ -11,6 +11,13 @@ import (
 
 func StringToObj(src string, direction interface{}) (err error) {
 
+	//对变量进行处理，得到Type和Value
+	directionType := reflect.TypeOf(direction)
+	directionValue := reflect.ValueOf(direction)
+	return StringToObjByReflect(src, directionType, directionValue)
+}
+
+func StringToObjByReflect(src string, directionType reflect.Type, directionValue reflect.Value) (err error) {
 	//首先运算表达式序列
 	expression, err := JsonScan.ScanJsonExpressions([]byte(src))
 	if err != nil {
@@ -37,10 +44,7 @@ func StringToObj(src string, direction interface{}) (err error) {
 		return
 	}
 
-	//对变量进行处理，得到Type和Value
-	directionType := reflect.TypeOf(direction)
-	directionValue := reflect.ValueOf(direction)
-
+	// 判断持有树最外层和目标最外层是否一致
 	switch directionType.Kind() {
 	case reflect.Map, reflect.Struct:
 		if tempField.Type != Modles.JsonFieldTypeMap {
@@ -63,8 +67,5 @@ func StringToObj(src string, direction interface{}) (err error) {
 	//接下来需要映射值到目标,可以到Tools内新建一个文件夹来做这个事情
 	fmt.Println(reflectFields)
 	return
-}
-
-func StringToObjByReflect() {
 
 }
