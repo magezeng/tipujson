@@ -10,10 +10,14 @@ import (
 )
 
 func StringToObj(src string, direction interface{}) (err error) {
+
+	//首先运算表达式序列
 	expression, err := JsonScan.ScanJsonExpressions([]byte(src))
 	if err != nil {
 		return
 	}
+
+	//根据表达书序列  生成持有树
 	var tempField *Modles.JsonField
 	var lastExpression *Modles.JsonExpression
 	switch expression.Type {
@@ -32,6 +36,8 @@ func StringToObj(src string, direction interface{}) (err error) {
 		err = errors.New("形成独立Json时间早于字符串结束(字符串前面一部分已经形成了完整Json)")
 		return
 	}
+
+	//对变量进行处理，得到Type和Value
 	directionType := reflect.TypeOf(direction)
 	directionValue := reflect.ValueOf(direction)
 
@@ -53,6 +59,8 @@ func StringToObj(src string, direction interface{}) (err error) {
 	if err != nil {
 		return
 	}
+
+	//接下来需要映射值到目标,可以到Tools内新建一个文件夹来做这个事情
 	fmt.Println(reflectFields)
 	return
 }
