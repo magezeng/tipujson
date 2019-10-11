@@ -59,6 +59,8 @@ func StringToObjByReflect(src string, directionType reflect.Type, directionValue
 	default:
 		err = errors.New(fmt.Sprintf("暂不支持%V的映射", directionType))
 	}
+
+	// 扫描目标反射结构
 	reflectFields, err := Tools.ScanReflectFeild(directionType, directionValue)
 	if err != nil {
 		return
