@@ -12,8 +12,8 @@ import (
 func StringToObj(src string, direction interface{}) (err error) {
 
 	//对变量进行处理，得到Type和Value
-	directionType := reflect.TypeOf(direction)
-	directionValue := reflect.ValueOf(direction)
+	directionType := reflect.TypeOf(direction).Elem()
+	directionValue := reflect.ValueOf(direction).Elem()
 	return StringToObjByReflect(src, directionType, directionValue)
 }
 
@@ -27,7 +27,8 @@ func StringToObjByReflect(src string, directionType reflect.Type, directionValue
 	//根据表达书序列  生成持有树
 	var tempField *Modles.JsonField
 	var lastExpression *Modles.JsonExpression
-	switch expression.Type {
+	kind := expression.Type
+	switch kind {
 	case Modles.JsonExpressionTypeListStart:
 		lastExpression, tempField, err = JsonScan.GetJsonListField(expression)
 	case Modles.JsonExpressionTypeMapStart:
@@ -44,30 +45,32 @@ func StringToObjByReflect(src string, directionType reflect.Type, directionValue
 		return
 	}
 
-	// 判断持有树最外层和目标最外层是否一致
+	// 分类型进行扫描反射字段,并映射值到目标
 	switch directionType.Kind() {
-	case reflect.Map, reflect.Struct:
-		if tempField.Type != Modles.JsonFieldTypeMap {
-			err = errors.New(fmt.Sprintf("不能将字典映射到%V", directionType))
-			return
-		}
+	case reflect.Struct:
+		reflectFields, _ := Tools.ScanStructReflectFeild(directionType, directionValue)
+		err = Tools.SetStructReflectField(reflectFields, expression)
+		return
 	case reflect.Slice:
 		if tempField.Type != Modles.JsonFieldTypeList {
 			err = errors.New(fmt.Sprintf("不能将List映射到%V", directionType))
 			return
 		}
+		reflectFields, _ := Tools.ScanSliceReflectFeild(directionType, directionValue)
+		err = Tools.SetSliceReflectField(reflectFields)
+		return
+	case reflect.Map:
+		if tempField.Type != Modles.JsonFieldTypeMap {
+			err = errors.New(fmt.Sprintf("不能将字典映射到%V", directionType))
+			return
+		}
+		reflectFields, _ := Tools.ScanStructReflectFeild(directionType, directionValue)
+		err = Tools.SetMapReflectField(reflectFields)
+		return
 	default:
 		err = errors.New(fmt.Sprintf("暂不支持%V的映射", directionType))
 	}
 
-	// 扫描目标反射结构
-	reflectFields, err := Tools.ScanReflectFeild(directionType, directionValue)
-	if err != nil {
-		return
-	}
-
-	//接下来需要映射值到目标,可以到Tools内新建一个文件夹来做这个事情
-	fmt.Println(reflectFields)
 	return
 
 }

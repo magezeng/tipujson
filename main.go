@@ -17,10 +17,11 @@ type RunParamsUnit struct {
 }
 
 func main() {
-	fromString := `[{"nick_name":"参数111111","name":"params1","type":1,"default":"haha","description":"该参数是在测试","index":1}]`
-	var result []RunParamsUnit
-	TipuJson.StringToObj(fromString, &result)
-	//fmt.Println(result)
+	fromString := `{"nick_name":"参数111111","name":"params1","type":1,"default":"haha","description":"该参数是在测试","index":1}`
+	var result RunParamsUnit
+
+	err := TipuJson.StringToObj(fromString, &result)
+	fmt.Println(err)
 
 	expressions, _ := JsonScan.ScanJsonExpressions([]byte(fromString))
 	for ; expressions != nil; expressions = expressions.Next {
