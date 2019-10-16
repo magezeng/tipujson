@@ -3,6 +3,7 @@ package JsonScan
 import (
 	. "TipuJson/TipuJson/Modles"
 	"errors"
+	"strings"
 )
 
 func GetJsonListField(expression *JsonExpression) (lastExpression *JsonExpression, field *JsonField, err error) {
@@ -112,6 +113,11 @@ func GetJsonNumberField(expression *JsonExpression) (lastExpression *JsonExpress
 	lastExpression = expression
 	field.Content = lastExpression.Content
 	lastExpression = lastExpression.Next
+
+	tempContent := strings.ToLower(lastExpression.Content)
+	if tempContent == "true" || tempContent == "false" {
+		field.Type = JsonFieldTypeBool
+	}
 	return
 }
 func GetJsonStringField(expression *JsonExpression) (lastExpression *JsonExpression, field *JsonField, err error) {
