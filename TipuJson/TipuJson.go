@@ -45,8 +45,12 @@ func StringToObjByReflect(src string, directionType reflect.Type, directionValue
 		return
 	}
 
+	switchDirectionType := directionType
+	for switchDirectionType.Kind() == reflect.Ptr {
+		switchDirectionType = switchDirectionType.Elem()
+	}
 	// 分类型进行扫描反射字段,并映射值到目标
-	switch directionType.Kind() {
+	switch switchDirectionType.Kind() {
 	case reflect.Struct, reflect.Map, reflect.Interface, reflect.Slice:
 		err = Tools.ReflectJsonFieldToAnyType(srcJsonField, directionType, directionValue)
 		return

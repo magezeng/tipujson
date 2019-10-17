@@ -10,6 +10,13 @@ import (
 
 func ReflectJsonFieldToAnyType(field *Modles.JsonField, waitSetType reflect.Type, waitSetValue reflect.Value) (err error) {
 	switch waitSetType.Kind() {
+	case reflect.Ptr:
+		waitSetType = waitSetType.Elem()
+		if waitSetValue.IsNil() {
+			waitSetValue.Set(reflect.New(waitSetType))
+		}
+		waitSetValue = waitSetValue.Elem()
+		err = ReflectJsonFieldToAnyType(field, waitSetType, waitSetValue)
 	case reflect.Struct:
 		err = ReflectJsonFieldToStruct(field, waitSetType, waitSetValue)
 	case reflect.Slice:

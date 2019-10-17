@@ -3,7 +3,6 @@ package main
 import (
 	"TipuJson/RunParamsUnitType"
 	"TipuJson/TipuJson"
-	"TipuJson/TipuJson/Tools/JsonScan"
 	"fmt"
 )
 
@@ -23,16 +22,12 @@ type Params struct {
 }
 
 func main() {
-	fromString := `[{"params":{"nick_names":"哈哈","names":"子对象","types":2},"nick_name":"参数111111","name":"params1","type":1,"description":"该参数是在测试","index":1}]`
+	fromString := `{"params":{"nick_names":"哈哈","names":"子对象","types":2},"nick_name":"参数111111","name":"params1","type":1,"description":"该参数是在测试","index":1}`
 	//result := []map[string]interface{}{}
-	var result []map[string]interface{}
+	//var result []map[string]interface{}
+	//result := new(RunParamsUnit)
+	var result **RunParamsUnit
 	err := TipuJson.StringToObj(fromString, &result)
 	fmt.Println(err)
 	fmt.Println(result)
-
-	expressions, _ := JsonScan.ScanJsonExpressions([]byte(fromString))
-	for ; expressions != nil; expressions = expressions.Next {
-		fmt.Println(expressions.Content)
-	}
-
 }
