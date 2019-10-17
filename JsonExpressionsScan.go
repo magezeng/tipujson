@@ -1,4 +1,4 @@
-package JsonScan
+package TipuJson
 
 import (
 	"github.com/magezeng/TipuJson/Modles"

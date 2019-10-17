@@ -1,4 +1,4 @@
-package StringToAny
+package TipuJson
 
 import (
 	"errors"
@@ -14,6 +14,7 @@ func StringToInt64(arg string) (value int64, err error) {
 	}
 	return
 }
+
 func StringToUInt64(arg string) (value uint64, err error) {
 	value, err = strconv.ParseUint(arg, 10, 64)
 	if err != nil {
@@ -22,6 +23,7 @@ func StringToUInt64(arg string) (value uint64, err error) {
 	}
 	return
 }
+
 func StringToBool(arg string) (value bool, err error) {
 	value, err = strconv.ParseBool(arg)
 	if err != nil {

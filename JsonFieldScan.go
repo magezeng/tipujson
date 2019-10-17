@@ -1,4 +1,4 @@
-package JsonScan
+package TipuJson
 
 import (
 	"errors"
@@ -11,7 +11,7 @@ func GetJsonListField(expression *JsonExpression) (lastExpression *JsonExpressio
 	field.Type = JsonFieldTypeList
 	contents := []*JsonField{}
 	lastExpression = expression
-	lastExpression = lastExpression.GetNext()
+	lastExpression = lastExpression.Next
 	if err != nil {
 		return
 	}
@@ -21,7 +21,7 @@ func GetJsonListField(expression *JsonExpression) (lastExpression *JsonExpressio
 		switch lastExpression.Type {
 		case JsonExpressionTypeListEnd:
 			//list结束了
-			lastExpression = lastExpression.GetNext()
+			lastExpression = lastExpression.Next
 			field.Content = contents
 			return
 		case JsonExpressionTypeMapStart:
@@ -49,14 +49,14 @@ func GetJsonMapField(expression *JsonExpression) (lastExpression *JsonExpression
 	field.Type = JsonFieldTypeMap
 	contents := map[string]*JsonField{}
 	lastExpression = expression
-	lastExpression = lastExpression.GetNext()
+	lastExpression = lastExpression.Next
 	if err != nil {
 		return
 	}
 	for true {
 		if lastExpression.Type == JsonExpressionTypeMapEnd {
 			//map结束了
-			lastExpression = lastExpression.GetNext()
+			lastExpression = lastExpression.Next
 			field.Content = contents
 			return
 		}
@@ -85,7 +85,7 @@ func GetJsonKeyValue(expression *JsonExpression) (lastExpression *JsonExpression
 		err = errors.New("Json字典内Key后面必须跟随一个':'")
 		return
 	}
-	lastExpression = lastExpression.GetNext()
+	lastExpression = lastExpression.Next
 	if err != nil {
 		return
 	}
@@ -103,7 +103,7 @@ func GetJsonKeyValue(expression *JsonExpression) (lastExpression *JsonExpression
 		return
 	}
 	if lastExpression.Type == JsonExpressionTypeComma {
-		lastExpression = lastExpression.GetNext()
+		lastExpression = lastExpression.Next
 	}
 	return
 }

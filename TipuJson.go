@@ -4,8 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"github.com/magezeng/TipuJson/Modles"
-	"github.com/magezeng/TipuJson/Tools"
-	"github.com/magezeng/TipuJson/Tools/JsonScan"
 	"reflect"
 )
 
@@ -19,7 +17,7 @@ func StringToObj(src string, direction interface{}) (err error) {
 
 func StringToObjByReflect(src string, directionType reflect.Type, directionValue reflect.Value) (err error) {
 	//首先运算表达式序列
-	expression, err := JsonScan.ScanJsonExpressions([]byte(src))
+	expression, err := ScanJsonExpressions([]byte(src))
 	if err != nil {
 		return
 	}
@@ -30,9 +28,9 @@ func StringToObjByReflect(src string, directionType reflect.Type, directionValue
 	kind := expression.Type
 	switch kind {
 	case Modles.JsonExpressionTypeListStart:
-		lastExpression, srcJsonField, err = JsonScan.GetJsonListField(expression)
+		lastExpression, srcJsonField, err = GetJsonListField(expression)
 	case Modles.JsonExpressionTypeMapStart:
-		lastExpression, srcJsonField, err = JsonScan.GetJsonMapField(expression)
+		lastExpression, srcJsonField, err = GetJsonMapField(expression)
 	default:
 		err = errors.New("Json顶层必须是一个字典或者数组")
 	}
@@ -52,12 +50,10 @@ func StringToObjByReflect(src string, directionType reflect.Type, directionValue
 	// 分类型进行扫描反射字段,并映射值到目标
 	switch switchDirectionType.Kind() {
 	case reflect.Struct, reflect.Map, reflect.Interface, reflect.Slice:
-		err = Tools.ReflectJsonFieldToAnyType(srcJsonField, directionType, directionValue)
+		err = ReflectJsonFieldToAnyType(srcJsonField, directionType, directionValue)
 		return
 	default:
 		err = errors.New(fmt.Sprintf("暂不支持%v的映射", directionType))
 	}
-
 	return
-
 }

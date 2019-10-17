@@ -21,8 +21,3 @@ type JsonExpression struct {
 	Pre           *JsonExpression
 	Next          *JsonExpression
 }
-
-func (expression *JsonExpression) GetNext() (nextExpression *JsonExpression) {
-	nextExpression = expression.Next
-	return
-}

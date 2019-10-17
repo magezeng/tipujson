@@ -1,10 +1,9 @@
-package Tools
+package TipuJson
 
 import (
 	"errors"
 	"fmt"
 	"github.com/magezeng/TipuJson/Modles"
-	"github.com/magezeng/TipuJson/Tools/StringToAny"
 	"reflect"
 )
 
@@ -37,7 +36,7 @@ func ReflectJsonFieldToInterface(field *Modles.JsonField, waitSetType reflect.Ty
 		return
 	}
 	var tempInterface interface{}
-	tempInterface, err = field.ToMapElement()
+	tempInterface, err = ToMapElement(field)
 	waitSetValue.Set(reflect.ValueOf(tempInterface))
 	return
 }
@@ -49,7 +48,7 @@ func ReflectJsonFieldToMap(field *Modles.JsonField, waitSetType reflect.Type, wa
 		return
 	}
 	var tempInterface interface{}
-	tempInterface, err = field.ToMapElement()
+	tempInterface, err = ToMapElement(field)
 	if waitSetValue.IsNil() {
 		waitSetValue.Set(reflect.MakeMap(waitSetType))
 	}
@@ -108,7 +107,7 @@ func ReflectJsonFieldToBaseType(field *Modles.JsonField, waitSetType reflect.Typ
 			return
 		}
 		var tempValue uint64
-		tempValue, err = StringToAny.StringToUInt64(field.Content.(string))
+		tempValue, err = StringToUInt64(field.Content.(string))
 		if err != nil {
 			return
 		}
@@ -119,7 +118,7 @@ func ReflectJsonFieldToBaseType(field *Modles.JsonField, waitSetType reflect.Typ
 			return
 		}
 		var tempValue int64
-		tempValue, err = StringToAny.StringToInt64(field.Content.(string))
+		tempValue, err = StringToInt64(field.Content.(string))
 		if err != nil {
 			return
 		}
@@ -136,7 +135,7 @@ func ReflectJsonFieldToBaseType(field *Modles.JsonField, waitSetType reflect.Typ
 			return
 		}
 		var tempValue bool
-		tempValue, err = StringToAny.StringToBool(field.Content.(string))
+		tempValue, err = StringToBool(field.Content.(string))
 		if err != nil {
 			return
 		}
@@ -147,7 +146,7 @@ func ReflectJsonFieldToBaseType(field *Modles.JsonField, waitSetType reflect.Typ
 			return
 		}
 		var tempValue float64
-		tempValue, err = StringToAny.StringToFloat64(field.Content.(string))
+		tempValue, err = StringToFloat64(field.Content.(string))
 		if err != nil {
 			return
 		}
