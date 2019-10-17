@@ -1,7 +1,7 @@
 package JsonScan
 
 import (
-	"TipuJson/TipuJson/Modles"
+	"github.com/magezeng/TipuJson/Modles"
 )
 
 type JsonScanner struct {

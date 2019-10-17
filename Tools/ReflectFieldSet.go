@@ -1,10 +1,10 @@
 package Tools
 
 import (
-	"TipuJson/TipuJson/Modles"
-	"TipuJson/TipuJson/Tools/StringToAny"
 	"errors"
 	"fmt"
+	"github.com/magezeng/TipuJson/Modles"
+	"github.com/magezeng/TipuJson/Tools/StringToAny"
 	"reflect"
 )
 
@@ -33,7 +33,7 @@ func ReflectJsonFieldToAnyType(field *Modles.JsonField, waitSetType reflect.Type
 func ReflectJsonFieldToInterface(field *Modles.JsonField, waitSetType reflect.Type, waitSetValue reflect.Value) (err error) {
 	// 假如说双方类型未匹配上，则直接出错退出
 	if waitSetType.Kind() != reflect.Interface {
-		err = errors.New(fmt.Sprintf("不能使用ReflectJsonFieldToInterface方法将%s映射到%V中", field.Type, waitSetType))
+		err = errors.New(fmt.Sprintf("不能使用ReflectJsonFieldToInterface方法将%s映射到%v中", field.Type, waitSetType))
 		return
 	}
 	var tempInterface interface{}
@@ -45,7 +45,7 @@ func ReflectJsonFieldToInterface(field *Modles.JsonField, waitSetType reflect.Ty
 func ReflectJsonFieldToMap(field *Modles.JsonField, waitSetType reflect.Type, waitSetValue reflect.Value) (err error) {
 	// 假如说双方类型未匹配上，则直接出错退出
 	if field.Type != Modles.JsonFieldTypeMap || waitSetType.Kind() != reflect.Map {
-		err = errors.New(fmt.Sprintf("不能使用ReflectJsonFieldToMap方法将%s映射到%V中", field.Type, waitSetType))
+		err = errors.New(fmt.Sprintf("不能使用ReflectJsonFieldToMap方法将%s映射到%v中", field.Type, waitSetType))
 		return
 	}
 	var tempInterface interface{}
@@ -61,7 +61,7 @@ func ReflectJsonFieldToMap(field *Modles.JsonField, waitSetType reflect.Type, wa
 
 func ReflectJsonFieldToStruct(field *Modles.JsonField, waitSetType reflect.Type, waitSetValue reflect.Value) (err error) {
 	if waitSetType.Kind() != reflect.Struct || field.Type != Modles.JsonFieldTypeMap {
-		err = errors.New(fmt.Sprintf("不能使用ReflectJsonFieldToStruct方法将%s映射到%V中", field.Type, waitSetType))
+		err = errors.New(fmt.Sprintf("不能使用ReflectJsonFieldToStruct方法将%s映射到%v中", field.Type, waitSetType))
 		return
 	}
 	content := field.Content.(map[string]*Modles.JsonField)
@@ -70,7 +70,6 @@ func ReflectJsonFieldToStruct(field *Modles.JsonField, waitSetType reflect.Type,
 		typeField := waitSetType.Field(i)
 		name := typeField.Name
 		jsonName := typeField.Tag.Get("json")
-		fmt.Printf("%V", reflect.TypeOf(reflect.ValueOf(valueField)))
 		if jsonName == "" {
 			jsonName = name
 		}
@@ -88,7 +87,7 @@ func ReflectJsonFieldToStruct(field *Modles.JsonField, waitSetType reflect.Type,
 
 func ReflectJsonFieldToSlice(field *Modles.JsonField, waitSetType reflect.Type, waitSetValue reflect.Value) (err error) {
 	if waitSetType.Kind() != reflect.Slice || field.Type != Modles.JsonFieldTypeList {
-		err = errors.New(fmt.Sprintf("不能使用ReflectJsonFieldToSlice方法将%s映射到%V中", field.Type, waitSetType))
+		err = errors.New(fmt.Sprintf("不能使用ReflectJsonFieldToSlice方法将%s映射到%v中", field.Type, waitSetType))
 		return
 	}
 	subFieldType := waitSetType.Elem()
@@ -105,7 +104,7 @@ func ReflectJsonFieldToBaseType(field *Modles.JsonField, waitSetType reflect.Typ
 	switch waitSetType.Kind() {
 	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Uintptr:
 		if field.Type != Modles.JsonFieldTypeNumber {
-			err = errors.New(fmt.Sprintf("不能使用ReflectJsonFieldToAny方法将%s映射到%V中", field.Type, waitSetType))
+			err = errors.New(fmt.Sprintf("不能使用ReflectJsonFieldToAny方法将%s映射到%v中", field.Type, waitSetType))
 			return
 		}
 		var tempValue uint64
@@ -116,7 +115,7 @@ func ReflectJsonFieldToBaseType(field *Modles.JsonField, waitSetType reflect.Typ
 		waitSetValue.SetUint(tempValue)
 	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
 		if field.Type != Modles.JsonFieldTypeNumber {
-			err = errors.New(fmt.Sprintf("不能使用ReflectJsonFieldToAny方法将%s映射到%V中", field.Type, waitSetType))
+			err = errors.New(fmt.Sprintf("不能使用ReflectJsonFieldToAny方法将%s映射到%v中", field.Type, waitSetType))
 			return
 		}
 		var tempValue int64
@@ -127,13 +126,13 @@ func ReflectJsonFieldToBaseType(field *Modles.JsonField, waitSetType reflect.Typ
 		waitSetValue.SetInt(tempValue)
 	case reflect.String:
 		if field.Type != Modles.JsonFieldTypeString {
-			err = errors.New(fmt.Sprintf("不能使用ReflectJsonFieldToAny方法将%s映射到%V中", field.Type, waitSetType))
+			err = errors.New(fmt.Sprintf("不能使用ReflectJsonFieldToAny方法将%s映射到%v中", field.Type, waitSetType))
 			return
 		}
 		waitSetValue.SetString(field.Content.(string))
 	case reflect.Bool:
 		if field.Type != Modles.JsonFieldTypeBool {
-			err = errors.New(fmt.Sprintf("不能使用ReflectJsonFieldToAny方法将%s映射到%V中", field.Type, waitSetType))
+			err = errors.New(fmt.Sprintf("不能使用ReflectJsonFieldToAny方法将%s映射到%v中", field.Type, waitSetType))
 			return
 		}
 		var tempValue bool
@@ -144,7 +143,7 @@ func ReflectJsonFieldToBaseType(field *Modles.JsonField, waitSetType reflect.Typ
 		waitSetValue.SetBool(tempValue)
 	case reflect.Float32, reflect.Float64:
 		if field.Type != Modles.JsonFieldTypeNumber {
-			err = errors.New(fmt.Sprintf("不能使用ReflectJsonFieldToAny方法将%s映射到%V中", field.Type, waitSetType))
+			err = errors.New(fmt.Sprintf("不能使用ReflectJsonFieldToAny方法将%s映射到%v中", field.Type, waitSetType))
 			return
 		}
 		var tempValue float64
@@ -154,7 +153,7 @@ func ReflectJsonFieldToBaseType(field *Modles.JsonField, waitSetType reflect.Typ
 		}
 		waitSetValue.SetFloat(tempValue)
 	default:
-		err = errors.New(fmt.Sprintf("暂不支持%V类型字段填充", waitSetType))
+		err = errors.New(fmt.Sprintf("暂不支持%v类型字段填充", waitSetType))
 	}
 	return
 }

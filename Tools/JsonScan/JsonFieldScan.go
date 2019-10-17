@@ -1,8 +1,8 @@
 package JsonScan
 
 import (
-	. "TipuJson/TipuJson/Modles"
 	"errors"
+	. "github.com/magezeng/TipuJson/Modles"
 	"strings"
 )
 

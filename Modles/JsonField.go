@@ -1,9 +1,9 @@
 package Modles
 
 import (
-	"TipuJson/TipuJson/Tools/StringToAny"
 	"errors"
 	"fmt"
+	"github.com/magezeng/TipuJson/Tools/StringToAny"
 )
 
 type JsonFieldType string

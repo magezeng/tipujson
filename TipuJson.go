@@ -1,11 +1,11 @@
 package TipuJson
 
 import (
-	"TipuJson/TipuJson/Modles"
-	"TipuJson/TipuJson/Tools"
-	"TipuJson/TipuJson/Tools/JsonScan"
 	"errors"
 	"fmt"
+	"github.com/magezeng/TipuJson/Modles"
+	"github.com/magezeng/TipuJson/Tools"
+	"github.com/magezeng/TipuJson/Tools/JsonScan"
 	"reflect"
 )
 
@@ -55,7 +55,7 @@ func StringToObjByReflect(src string, directionType reflect.Type, directionValue
 		err = Tools.ReflectJsonFieldToAnyType(srcJsonField, directionType, directionValue)
 		return
 	default:
-		err = errors.New(fmt.Sprintf("暂不支持%V的映射", directionType))
+		err = errors.New(fmt.Sprintf("暂不支持%v的映射", directionType))
 	}
 
 	return
