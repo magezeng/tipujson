@@ -57,3 +57,22 @@ func StringToObjByReflect(src string, directionType reflect.Type, directionValue
 	}
 	return
 }
+func ObjectToJsonString(src interface{}) (result string, err error) {
+	srcType := reflect.TypeOf(src)
+	srcValue := reflect.ValueOf(src)
+	return ReflectObjectToJsonString(srcType, srcValue)
+}
+func ReflectObjectToJsonString(srcType reflect.Type, srcValue reflect.Value) (result string, err error) {
+	switchType := srcType
+	for switchType.Kind() == reflect.Ptr {
+		switchType = switchType.Elem()
+	}
+	switch switchType.Kind() {
+	case reflect.Map, reflect.Slice, reflect.Struct:
+		result, err = AnyToJsonString(srcType, srcValue)
+		return
+	default:
+		err = errors.New(fmt.Sprintf("ObjectToJsonString暂不支持将%v转化为String", srcType))
+		return
+	}
+}

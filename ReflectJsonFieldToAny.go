@@ -123,6 +123,17 @@ func ReflectJsonFieldToBaseType(field *Modles.JsonField, waitSetType reflect.Typ
 			return
 		}
 		waitSetValue.SetInt(tempValue)
+	case reflect.Float32, reflect.Float64:
+		if field.Type != Modles.JsonFieldTypeNumber {
+			err = errors.New(fmt.Sprintf("不能使用ReflectJsonFieldToAny方法将%s映射到%v中", field.Type, waitSetType))
+			return
+		}
+		var tempValue float64
+		tempValue, err = StringToFloat64(field.Content.(string))
+		if err != nil {
+			return
+		}
+		waitSetValue.SetFloat(tempValue)
 	case reflect.String:
 		if field.Type != Modles.JsonFieldTypeString {
 			err = errors.New(fmt.Sprintf("不能使用ReflectJsonFieldToAny方法将%s映射到%v中", field.Type, waitSetType))
@@ -140,17 +151,6 @@ func ReflectJsonFieldToBaseType(field *Modles.JsonField, waitSetType reflect.Typ
 			return
 		}
 		waitSetValue.SetBool(tempValue)
-	case reflect.Float32, reflect.Float64:
-		if field.Type != Modles.JsonFieldTypeNumber {
-			err = errors.New(fmt.Sprintf("不能使用ReflectJsonFieldToAny方法将%s映射到%v中", field.Type, waitSetType))
-			return
-		}
-		var tempValue float64
-		tempValue, err = StringToFloat64(field.Content.(string))
-		if err != nil {
-			return
-		}
-		waitSetValue.SetFloat(tempValue)
 	default:
 		err = errors.New(fmt.Sprintf("暂不支持%v类型字段填充", waitSetType))
 	}
