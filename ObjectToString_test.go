@@ -5,28 +5,21 @@ import (
 	"testing"
 )
 
-type TempStruct struct {
-	a         int
-	b         int
-	subStruct TempSubStruct
-	subSlice  []string
-	subMap    map[string]float64
-}
-type TempSubStruct struct {
-	s int
-	b string
-}
-
 func TestObjectToJsonString_struct(t *testing.T) {
-	result, err := ObjectToJsonString(TempStruct{
-		a: 10,
-		b: 30,
-		subStruct: TempSubStruct{
-			s: 3,
-			b: "我是谁",
-		},
-		subSlice: []string{"123", "345"},
-		subMap:   map[string]float64{"kk": 12.3, "BB": 45.9},
+	result, _ := ObjectToJsonString(Classes{
+		SchoolName:  "成都信息工程大学实验小学",
+		SchoolStage: "小学",
+		Grade:       3,
+		Students: []Student{{
+			Name: "小明",
+			Age:  10,
+		}, {
+			Name: "小张",
+			Age:  10,
+		}, {
+			Name: "小李",
+			Age:  10,
+		}},
 	})
-	fmt.Println(result, err)
+	fmt.Println(result)
 }

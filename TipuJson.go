@@ -18,6 +18,12 @@ func StringToObj(src string, direction interface{}) (err error) {
 func StringToObjByReflect(src string, directionType reflect.Type, directionValue reflect.Value) (err error) {
 	//首先运算表达式序列
 	expression, err := ScanJsonExpressions([]byte(src))
+	printExpression := expression
+	for printExpression != nil {
+		fmt.Print(printExpression.Content)
+		printExpression = printExpression.Next
+	}
+	fmt.Println("")
 	if err != nil {
 		return
 	}
@@ -33,6 +39,9 @@ func StringToObjByReflect(src string, directionType reflect.Type, directionValue
 		lastExpression, srcJsonField, err = GetJsonMapField(expression)
 	default:
 		err = errors.New("Json顶层必须是一个字典或者数组")
+	}
+	if err != nil {
+		return
 	}
 	if srcJsonField == nil {
 		err = errors.New("检索字符串得到的内容为空")

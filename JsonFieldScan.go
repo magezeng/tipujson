@@ -38,6 +38,9 @@ func GetJsonListField(expression *JsonExpression) (lastExpression *JsonExpressio
 		if err != nil {
 			return
 		}
+		if lastExpression.Type == JsonExpressionTypeComma {
+			lastExpression = lastExpression.Next
+		}
 		tempField.Parents = field
 		contents = append(contents, tempField)
 	}
