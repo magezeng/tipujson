@@ -48,7 +48,7 @@ func getOneExpression(jsonString []byte, length int, cursor *int) (expression Mo
 	for *cursor < length {
 		currentChar := jsonString[*cursor]
 		switch currentChar {
-		case ' ':
+		case ' ', '\n', '\t':
 			if startCursor == *cursor {
 				startCursor += 1
 			}
