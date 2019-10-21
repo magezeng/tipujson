@@ -10,8 +10,9 @@ $ go get -u github.com/magezeng/TipuJson
 ```go
 import "github.com/magezeng/TipuJson"
 ```
-##Examples
+## Examples
 ```go
+package main
 import (
 	"fmt"
 	"testing"
@@ -35,7 +36,7 @@ type Classes struct {
 	Students    []Student   `json:"students"`
 }
 
-func TestStringToObj(t *testing.T) {
+func main() {
 	fromString := `{"school_name":"成都信息工程大学实验小学","school_stage":"小学","grade":3,"students":[{"name":"小明","age":10},{"name":"小张","age":10},{"name":"小李","age":10}]}`
 	//result := []map[string]interface{}{}
 	var result Classes
