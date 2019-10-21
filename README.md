@@ -12,7 +12,6 @@ import "github.com/magezeng/TipuJson"
 ```
 ##Examples
 ```go
-
 import (
 	"fmt"
 	"testing"
