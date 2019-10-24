@@ -2,149 +2,124 @@ package TipuJson
 
 import (
 	"errors"
+	"github.com/magezeng/TipuJson/BytesScanner"
 	. "github.com/magezeng/TipuJson/Modles"
-	"strings"
 )
 
-func GetJsonListField(expression *JsonExpression) (lastExpression *JsonExpression, field *JsonField, err error) {
-	field = new(JsonField)
-	field.Type = JsonFieldTypeList
-	contents := []*JsonField{}
-	lastExpression = expression
-	lastExpression = lastExpression.Next
-	if err != nil {
-		return
-	}
-	for true {
-
-		var tempField *JsonField
-		switch lastExpression.Type {
-		case JsonExpressionTypeListEnd:
-			//list结束了
-			lastExpression = lastExpression.Next
-			field.Content = contents
-			return
-		case JsonExpressionTypeMapStart:
-			lastExpression, tempField, err = GetJsonMapField(lastExpression)
-		case JsonExpressionTypeListStart:
-			lastExpression, tempField, err = GetJsonListField(lastExpression)
-		case JsonExpressionTypeStringMark:
-			lastExpression, tempField, err = GetJsonStringField(lastExpression)
-		case JsonExpressionTypeValue:
-			lastExpression, tempField, err = GetJsonNumberField(lastExpression)
-		default:
-			err = errors.New("数组内只允许存放Number，Map，List，String")
-		}
-		if err != nil {
-			return
-		}
-		if lastExpression.Type == JsonExpressionTypeComma {
-			lastExpression = lastExpression.Next
-		}
-		tempField.Parents = field
-		contents = append(contents, tempField)
-	}
+func GetJsonFieldFromString(jsonString string) (field *JsonField, err error) {
+	bytes := []byte(jsonString)
+	scanner := BytesScanner.BytesScanner{bytes, 0}
+	field = getJsonObjectFieldFromScanner(&scanner)
 	return
 }
-
-func GetJsonMapField(expression *JsonExpression) (lastExpression *JsonExpression, field *JsonField, err error) {
-	field = new(JsonField)
-	field.Type = JsonFieldTypeMap
-	contents := map[string]*JsonField{}
-	lastExpression = expression
-	lastExpression = lastExpression.Next
-	if err != nil {
-		return
-	}
-	for true {
-		if lastExpression.Type == JsonExpressionTypeMapEnd {
-			//map结束了
-			lastExpression = lastExpression.Next
-			field.Content = contents
-			return
+func getJsonObjectFieldFromScanner(scanner *BytesScanner.BytesScanner) (result *JsonField) {
+	scanner.BackMoveToNotNull()
+	switch scanner.CurrentValue() {
+	case '[':
+		return getJsonListFieldFromScanner(scanner)
+	case '{':
+		return getJsonMapFieldFromScanner(scanner)
+	case '"':
+		return &JsonField{
+			Type:    JsonFieldTypeString,
+			Content: scanner.ScanString(),
 		}
-		if lastExpression.Type != JsonExpressionTypeStringMark {
-			err = errors.New("Map的键必须是字符串")
-			return
-		}
-		var key string
-		var tempField *JsonField
-		lastExpression, key, tempField, err = GetJsonKeyValue(lastExpression)
-		if err != nil {
-			return
-		}
-		tempField.Parents = field
-		contents[key] = tempField
-	}
-	return
-}
-
-func GetJsonKeyValue(expression *JsonExpression) (lastExpression *JsonExpression, key string, field *JsonField, err error) {
-	lastExpression, key, err = GetJsonStringContent(expression)
-	if err != nil {
-		return
-	}
-	if lastExpression.Type != JsonExpressionTypeColon {
-		err = errors.New("Json字典内Key后面必须跟随一个':'")
-		return
-	}
-	lastExpression = lastExpression.Next
-	if err != nil {
-		return
-	}
-	switch lastExpression.Type {
-	case JsonExpressionTypeStringMark:
-		lastExpression, field, err = GetJsonStringField(lastExpression)
-	case JsonExpressionTypeValue:
-		lastExpression, field, err = GetJsonNumberField(lastExpression)
-	case JsonExpressionTypeListStart:
-		lastExpression, field, err = GetJsonListField(lastExpression)
-	case JsonExpressionTypeMapStart:
-		lastExpression, field, err = GetJsonMapField(lastExpression)
 	default:
-		err = errors.New("键值对的值只能是数字或者字符串")
-		return
+		result, isBool := scanner.ScanNumberString()
+		if isBool {
+			return &JsonField{
+				Type:    JsonFieldTypeBool,
+				Content: result,
+			}
+		} else {
+			return &JsonField{
+				Type:    JsonFieldTypeNumber,
+				Content: result,
+			}
+		}
 	}
-	if lastExpression.Type == JsonExpressionTypeComma {
-		lastExpression = lastExpression.Next
-	}
-	return
-}
-func GetJsonNumberField(expression *JsonExpression) (lastExpression *JsonExpression, field *JsonField, err error) {
-	field = new(JsonField)
-	field.Type = JsonFieldTypeNumber
-	lastExpression = expression
-	field.Content = lastExpression.Content
-	lastExpression = lastExpression.Next
-
-	tempContent := strings.ToLower(lastExpression.Content)
-	if tempContent == "true" || tempContent == "false" {
-		field.Type = JsonFieldTypeBool
-	}
-	return
-}
-func GetJsonStringField(expression *JsonExpression) (lastExpression *JsonExpression, field *JsonField, err error) {
-	field = new(JsonField)
-	field.Type = JsonFieldTypeString
-	lastExpression, field.Content, err = GetJsonStringContent(expression)
-	return
 }
 
-func GetJsonStringContent(expression *JsonExpression) (lastExpression *JsonExpression, content string, err error) {
-	lastExpression = expression
-	lastExpression = lastExpression.Next
-	if err != nil {
+func getJsonListFieldFromScanner(scanner *BytesScanner.BytesScanner) (field *JsonField) {
+	content := []*JsonField{}
+	scanner.BackMove()
+	scanner.BackMoveToNotNull()
+	for {
+		value, isEnd := getListValueOrListEndFromScanner(scanner)
+		if isEnd {
+			break
+		}
+		content = append(content, value)
+	}
+	return &JsonField{
+		Type:    JsonFieldTypeList,
+		Content: content,
+	}
+}
+
+func getListValueOrListEndFromScanner(scanner *BytesScanner.BytesScanner) (value *JsonField, isEnd bool) {
+	scanner.BackMoveToNotNull()
+	if scanner.CurrentValue() == ']' {
+		isEnd = true
+		scanner.BackMove()
 		return
 	}
-	content = lastExpression.Content
-	lastExpression = lastExpression.Next
-	if err != nil {
-		return
+	value = getJsonObjectFieldFromScanner(scanner)
+	isEnd = false
+	if scanner.CurrentValue() == ',' {
+		scanner.BackMove()
 	}
-	if lastExpression.Type != JsonExpressionTypeStringMark {
-		err = errors.New("字符串未以\"结束")
-		return
-	}
-	lastExpression = lastExpression.Next
 	return
+}
+
+func getJsonMapFieldFromScanner(scanner *BytesScanner.BytesScanner) (field *JsonField) {
+	content := map[string]*JsonField{}
+	scanner.BackMove()
+	for {
+		key, value, isEnd := getMapKeyValueOrMapEndFromScanner(scanner)
+		if isEnd {
+			break
+		}
+		content[key] = value
+	}
+	return &JsonField{
+		Type:    JsonFieldTypeMap,
+		Content: content,
+	}
+}
+
+func getMapKeyValueOrMapEndFromScanner(scanner *BytesScanner.BytesScanner) (key string, value *JsonField, isEnd bool) {
+	startPosition := scanner.Cursor
+	scanner.BackMoveToNotNull()
+	if scanner.CurrentValue() == '}' {
+		isEnd = true
+		scanner.BackMove()
+		return
+	} else if scanner.CurrentValue() == '"' {
+		isEnd = false
+		key = scanner.ScanString()
+		scanner.BackMoveToNotNull()
+		if scanner.CurrentValue() != ':' {
+			panic(
+				errors.New("在:  " +
+					scanner.GetMarkString(startPosition, "<--该位置-->") +
+					"  未找到一个正常的键值对",
+				),
+			)
+		}
+		scanner.BackMove()
+		scanner.BackMoveToNotNull()
+		value = getJsonObjectFieldFromScanner(scanner)
+		if scanner.CurrentValue() == ',' {
+			scanner.BackMove()
+		}
+		return
+	} else {
+		panic(
+			errors.New("在:  " +
+				scanner.GetMarkString(startPosition, "<--该位置-->") +
+				"  未找到一个正常的键值对",
+			),
+		)
+	}
 }
