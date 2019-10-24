@@ -49,21 +49,9 @@ func (scanner *BytesScanner) BackMoveTo(to byte) {
 	}
 }
 
-//func (scanner *BytesScanner) BackMoveToNot(not byte) {
-//	for ; scanner.CurrentValue() == not; scanner.BackMove() {
-//	}
-//}
-
 func (scanner *BytesScanner) BackMoveToNotNull() {
 	for ; scanner.CurrentValue() == ' ' || scanner.CurrentValue() == '\t' || scanner.CurrentValue() == '\n'; scanner.BackMove() {
 	}
-}
-
-func (scanner *BytesScanner) GetSubStringFrom(startPosition int) string {
-	return string(scanner.Bytes[startPosition:scanner.Cursor])
-}
-func (scanner *BytesScanner) GetSubStringIn(startPosition int, endPosition int) string {
-	return string(scanner.Bytes[startPosition:endPosition])
 }
 
 func (scanner *BytesScanner) GetSubStringTo(endPosition int) string {
