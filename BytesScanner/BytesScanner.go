@@ -58,50 +58,23 @@ func (scanner *BytesScanner) GetSubStringTo(endPosition int) string {
 	return string(scanner.Bytes[scanner.Cursor:endPosition])
 }
 
-func (scanner *BytesScanner) ScanString() string {
-	startScanPosition := scanner.Cursor
-	defer func() {
-		if err := recover(); err != nil {
-			panic(
-				errors.New(
-					"从:" +
-						scanner.GetMarkString(startScanPosition, "<--该位置-->") +
-						"  未扫描到一个完整的字符串",
-				),
-			)
-		} else {
-			//将最后的那个引号给过掉
-			scanner.BackMove()
-		}
-	}()
-	for {
-		if scanner.CurrentValue() == ' ' || scanner.CurrentValue() == '\t' || scanner.CurrentValue() == '\n' {
-			scanner.BackMove()
-		} else if scanner.CurrentValue() == '"' {
-			scanner.BackMove()
-			break
-		} else {
-			panic(errors.New(""))
-		}
+func (scanner *BytesScanner) ScanString() (result string) {
+
+	scanner.BackMoveToNotNull()
+	//字符串必须以引号开始
+	if scanner.CurrentValue() == '"' {
+		scanner.BackMove()
+	} else {
+		panic(errors.New(""))
 	}
 	stringStartPosition := scanner.Cursor
 	scanner.BackMoveTo('"')
-	return string(scanner.Bytes[stringStartPosition:scanner.Cursor])
+	result = string(scanner.Bytes[stringStartPosition:scanner.Cursor])
+	scanner.BackMove()
+	return
 }
 
 func (scanner *BytesScanner) ScanNumberString() (result string, isBool bool) {
-	startScanPosition := scanner.Cursor
-	defer func() {
-		if err := recover(); err != nil {
-			panic(
-				errors.New(
-					"从:" +
-						scanner.GetMarkString(startScanPosition, "<--该位置-->") +
-						"  未扫描到一个数值字符串",
-				),
-			)
-		}
-	}()
 	scanner.BackMoveToNotNull()
 	for {
 		if (scanner.CurrentValue() >= '0' && scanner.CurrentValue() <= '9') || scanner.CurrentValue() == '.' {
