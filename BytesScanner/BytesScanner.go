@@ -68,7 +68,12 @@ func (scanner *BytesScanner) ScanString() (result string) {
 		panic(errors.New(""))
 	}
 	stringStartPosition := scanner.Cursor
-	scanner.BackMoveTo('"')
+
+	for ; scanner.CurrentValue() != '"'; scanner.Cursor++ {
+		if scanner.CurrentValue() == '\\' {
+			scanner.BackMoveDistance(1)
+		}
+	}
 	result = string(scanner.Bytes[stringStartPosition:scanner.Cursor])
 	scanner.BackMove()
 	return

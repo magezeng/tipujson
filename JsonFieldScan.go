@@ -51,13 +51,18 @@ func getJsonObjectFieldFromScanner(scanner *BytesScanner.BytesScanner) (result *
 
 func scanErrorDescriptionDefer(scanner *BytesScanner.BytesScanner, position int, errReason string) {
 	if err := recover(); err != nil {
-		panic(
-			errors.New(
-				"从:" +
-					scanner.GetMarkString(position, "<--该位置-->") +
-					"  " + errReason,
-			),
-		)
+		tempErr, isError := err.(error)
+		if isError && len(tempErr.Error()) > 0 {
+			panic(tempErr)
+		} else {
+			panic(
+				errors.New(
+					"从:" +
+						scanner.GetMarkString(position, "<--该位置-->") +
+						"  " + errReason,
+				),
+			)
+		}
 	}
 }
 
