@@ -7,13 +7,13 @@ import (
 )
 
 func GetJsonFieldFromString(jsonString string) (field *JsonField, err error) {
-	//defer func() {
-	//	if err == nil {
-	//		if tempErr := recover(); tempErr != nil {
-	//			err = tempErr.(error)
-	//		}
-	//	}
-	//}()
+	defer func() {
+		if err == nil {
+			if tempErr := recover(); tempErr != nil {
+				err = tempErr.(error)
+			}
+		}
+	}()
 	bytes := []byte(jsonString)
 	scanner := BytesScanner.BytesScanner{bytes, 0}
 	field = getJsonObjectFieldFromScanner(&scanner)
@@ -125,18 +125,18 @@ func getMapKeyValueOrMapEndFromScanner(scanner *BytesScanner.BytesScanner) (key 
 }
 
 func scanErrorDescriptionDefer(scanner *BytesScanner.BytesScanner, position int, errReason string) {
-	//if err := recover(); err != nil {
-	//	tempErr, isError := err.(error)
-	//	if isError && len(tempErr.Error()) > 0 {
-	//		panic(tempErr)
-	//	} else {
-	//		panic(
-	//			errors.New(
-	//				"从:" +
-	//					scanner.GetMarkString(position, "<--该位置-->") +
-	//					"  " + errReason,
-	//			),
-	//		)
-	//	}
-	//}
+	if err := recover(); err != nil {
+		tempErr, isError := err.(error)
+		if isError && len(tempErr.Error()) > 0 {
+			panic(tempErr)
+		} else {
+			panic(
+				errors.New(
+					"从:" +
+						scanner.GetMarkString(position, "<--该位置-->") +
+						"  " + errReason,
+				),
+			)
+		}
+	}
 }
