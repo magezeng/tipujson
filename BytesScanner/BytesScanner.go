@@ -50,7 +50,10 @@ func (scanner *BytesScanner) BackMoveTo(to byte) {
 }
 
 func (scanner *BytesScanner) BackMoveToNotNull() {
-	for ; scanner.CurrentValue() == ' ' || scanner.CurrentValue() == '\t' || scanner.CurrentValue() == '\n'; scanner.BackMove() {
+	for ; scanner.CurrentValue() == ' ' ||
+		scanner.CurrentValue() == '\t' ||
+		scanner.CurrentValue() == '\n' ||
+		scanner.CurrentValue() == '\r'; scanner.BackMove() {
 	}
 }
 
