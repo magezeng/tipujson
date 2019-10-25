@@ -103,7 +103,7 @@ func (scanner *BytesScanner) ScanNumberString() (result string, isBool bool) {
 	} else {
 		for {
 			scanner.BackMove()
-			if !(scanner.CurrentValue() >= '0' && scanner.CurrentValue() <= '9') || scanner.CurrentValue() == '.' {
+			if !((scanner.CurrentValue() >= '0' && scanner.CurrentValue() <= '9') || scanner.CurrentValue() == '.') {
 				break
 			}
 		}

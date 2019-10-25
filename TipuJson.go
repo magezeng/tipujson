@@ -17,41 +17,6 @@ func StringToObj(src string, direction interface{}) (err error) {
 
 func StringToObjByReflect(src string, directionType reflect.Type, directionValue reflect.Value) (err error) {
 
-	////首先运算表达式序列
-	//expression, err := ScanJsonExpressions([]byte(src))
-	//printExpression := expression
-	//for printExpression != nil {
-	//	fmt.Print(printExpression.Content)
-	//	printExpression = printExpression.Next
-	//}
-	//fmt.Println("")
-	//if err != nil {
-	//	return
-	//}
-	//
-	////根据表达书序列  生成持有树
-	//var srcJsonField *Modles.JsonField
-	//var lastExpression *Modles.JsonExpression
-	//kind := expression.Type
-	//switch kind {
-	//case Modles.JsonExpressionTypeListStart:
-	//	lastExpression, srcJsonField, err = GetJsonListField(expression)
-	//case Modles.JsonExpressionTypeMapStart:
-	//	lastExpression, srcJsonField, err = GetJsonMapField(expression)
-	//default:
-	//	err = errors.New("Json顶层必须是一个字典或者数组")
-	//}
-	//if err != nil {
-	//	return
-	//}
-	//if srcJsonField == nil {
-	//	err = errors.New("检索字符串得到的内容为空")
-	//	return
-	//}
-	//if lastExpression != nil {
-	//	err = errors.New("形成独立Json时间早于字符串结束(字符串前面一部分已经形成了完整Json)")
-	//	return
-	//}
 	var srcJsonField *Modles.JsonField
 	srcJsonField, err = GetJsonFieldFromString(src)
 	if err != nil {

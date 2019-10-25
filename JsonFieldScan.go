@@ -7,18 +7,19 @@ import (
 )
 
 func GetJsonFieldFromString(jsonString string) (field *JsonField, err error) {
-	defer func() {
-		if err == nil {
-			if tempErr := recover(); tempErr != nil {
-				err = tempErr.(error)
-			}
-		}
-	}()
+	//defer func() {
+	//	if err == nil {
+	//		if tempErr := recover(); tempErr != nil {
+	//			err = tempErr.(error)
+	//		}
+	//	}
+	//}()
 	bytes := []byte(jsonString)
 	scanner := BytesScanner.BytesScanner{bytes, 0}
 	field = getJsonObjectFieldFromScanner(&scanner)
 	return
 }
+
 func getJsonObjectFieldFromScanner(scanner *BytesScanner.BytesScanner) (result *JsonField) {
 	scanner.BackMoveToNotNull()
 	switch scanner.CurrentValue() {
@@ -45,23 +46,6 @@ func getJsonObjectFieldFromScanner(scanner *BytesScanner.BytesScanner) (result *
 				Type:    JsonFieldTypeNumber,
 				Content: result,
 			}
-		}
-	}
-}
-
-func scanErrorDescriptionDefer(scanner *BytesScanner.BytesScanner, position int, errReason string) {
-	if err := recover(); err != nil {
-		tempErr, isError := err.(error)
-		if isError && len(tempErr.Error()) > 0 {
-			panic(tempErr)
-		} else {
-			panic(
-				errors.New(
-					"从:" +
-						scanner.GetMarkString(position, "<--该位置-->") +
-						"  " + errReason,
-				),
-			)
 		}
 	}
 }
@@ -138,4 +122,21 @@ func getMapKeyValueOrMapEndFromScanner(scanner *BytesScanner.BytesScanner) (key 
 	} else {
 		panic(errors.New(""))
 	}
+}
+
+func scanErrorDescriptionDefer(scanner *BytesScanner.BytesScanner, position int, errReason string) {
+	//if err := recover(); err != nil {
+	//	tempErr, isError := err.(error)
+	//	if isError && len(tempErr.Error()) > 0 {
+	//		panic(tempErr)
+	//	} else {
+	//		panic(
+	//			errors.New(
+	//				"从:" +
+	//					scanner.GetMarkString(position, "<--该位置-->") +
+	//					"  " + errReason,
+	//			),
+	//		)
+	//	}
+	//}
 }
