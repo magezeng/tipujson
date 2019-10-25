@@ -21,6 +21,7 @@ func GetJsonFieldFromString(jsonString string) (field *JsonField, err error) {
 }
 
 func getJsonObjectFieldFromScanner(scanner *BytesScanner.BytesScanner) (result *JsonField) {
+	defer scanErrorDescriptionDefer(scanner, scanner.Cursor, "未扫描到一个Json对象")
 	scanner.BackMoveToNotNull()
 	switch scanner.CurrentValue() {
 	case '[':
@@ -33,20 +34,24 @@ func getJsonObjectFieldFromScanner(scanner *BytesScanner.BytesScanner) (result *
 			Type:    JsonFieldTypeString,
 			Content: scanner.ScanString(),
 		}
-	default:
-		defer scanErrorDescriptionDefer(scanner, scanner.Cursor, "未扫描到一个完整的数值字符串")
-		result, isBool := scanner.ScanNumberString()
-		if isBool {
-			return &JsonField{
-				Type:    JsonFieldTypeBool,
-				Content: result,
-			}
-		} else {
-			return &JsonField{
-				Type:    JsonFieldTypeNumber,
-				Content: result,
-			}
+	case 'n', 'N':
+		defer scanErrorDescriptionDefer(scanner, scanner.Cursor, "未扫描到一个完整的Null")
+		return &JsonField{
+			Type:    JsonFieldTypeNull,
+			Content: scanner.ScanNull(),
 		}
+	case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.':
+		return &JsonField{
+			Type:    JsonFieldTypeNumber,
+			Content: scanner.ScanNumberString(),
+		}
+	case 't', 'T', 'f', 'F':
+		return &JsonField{
+			Type:    JsonFieldTypeBool,
+			Content: scanner.ScanBool(),
+		}
+	default:
+		panic(errors.New(""))
 	}
 }
 

@@ -8,6 +8,7 @@ const (
 	JsonFieldTypeString               = "String"
 	JsonFieldTypeNumber               = "Number"
 	JsonFieldTypeBool                 = "Bool"
+	JsonFieldTypeNull                 = "Null"
 )
 
 type JsonField struct {

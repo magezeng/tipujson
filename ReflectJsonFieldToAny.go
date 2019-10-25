@@ -8,6 +8,10 @@ import (
 )
 
 func ReflectJsonFieldToAnyType(field *Modles.JsonField, waitSetType reflect.Type, waitSetValue reflect.Value) (err error) {
+	if field.Type == Modles.JsonFieldTypeNull {
+		//遇到空值的情况直接不进行映射
+		return
+	}
 	switch waitSetType.Kind() {
 	case reflect.Ptr:
 		waitSetType = waitSetType.Elem()
@@ -29,6 +33,7 @@ func ReflectJsonFieldToAnyType(field *Modles.JsonField, waitSetType reflect.Type
 	}
 	return
 }
+
 func ReflectJsonFieldToInterface(field *Modles.JsonField, waitSetType reflect.Type, waitSetValue reflect.Value) (err error) {
 	// 假如说双方类型未匹配上，则直接出错退出
 	if waitSetType.Kind() != reflect.Interface {

@@ -79,34 +79,39 @@ func (scanner *BytesScanner) ScanString() (result string) {
 	return
 }
 
-func (scanner *BytesScanner) ScanNumberString() (result string, isBool bool) {
+func (scanner *BytesScanner) ScanNull() (result string) {
+
 	scanner.BackMoveToNotNull()
+	stringStartPosition := scanner.Cursor
+	if strings.ToLower(string(scanner.GetSubStringTo(scanner.Cursor+4))) == "null" {
+		scanner.BackMoveDistance(4)
+	}
+	result = string(scanner.Bytes[stringStartPosition:scanner.Cursor])
+	return
+}
+
+func (scanner *BytesScanner) ScanNumberString() (result string) {
+	scanner.BackMoveToNotNull()
+	stringStartPosition := scanner.Cursor
 	for {
-		if (scanner.CurrentValue() >= '0' && scanner.CurrentValue() <= '9') || scanner.CurrentValue() == '.' {
-			isBool = false
+		scanner.BackMove()
+		if !((scanner.CurrentValue() >= '0' && scanner.CurrentValue() <= '9') || scanner.CurrentValue() == '.') {
 			break
-		} else if scanner.CurrentValue() == 'T' || scanner.CurrentValue() == 'F' || scanner.CurrentValue() == 't' || scanner.CurrentValue() == 'f' {
-			isBool = true
-			break
-		} else {
-			panic(errors.New(""))
 		}
 	}
+	result = string(scanner.Bytes[stringStartPosition:scanner.Cursor])
+	return
+}
+func (scanner *BytesScanner) ScanBool() (result string) {
+	scanner.BackMoveToNotNull()
 
 	stringStartPosition := scanner.Cursor
-	if isBool {
-		if strings.ToLower(string(scanner.GetSubStringTo(scanner.Cursor+4))) == "true" {
-			scanner.BackMoveDistance(4)
-		} else if strings.ToLower(string(scanner.GetSubStringTo(scanner.Cursor+5))) == "false" {
-			scanner.BackMoveDistance(5)
-		}
+	if strings.ToLower(string(scanner.GetSubStringTo(scanner.Cursor+4))) == "true" {
+		scanner.BackMoveDistance(4)
+	} else if strings.ToLower(string(scanner.GetSubStringTo(scanner.Cursor+5))) == "false" {
+		scanner.BackMoveDistance(5)
 	} else {
-		for {
-			scanner.BackMove()
-			if !((scanner.CurrentValue() >= '0' && scanner.CurrentValue() <= '9') || scanner.CurrentValue() == '.') {
-				break
-			}
-		}
+		panic(errors.New(""))
 	}
 	result = string(scanner.Bytes[stringStartPosition:scanner.Cursor])
 	return

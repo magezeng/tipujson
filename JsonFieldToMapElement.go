@@ -40,6 +40,9 @@ func ToMapElement(field *JsonField) (result interface{}, err error) {
 		}
 		result = tempResult
 		return
+	case JsonFieldTypeNull:
+		result = nil
+		return
 	default:
 		//不可能有其他类型出现
 		panic(errors.New(fmt.Sprintf("JsonField.ToMapElement出现了不支持的类型%s", field.Type)))
