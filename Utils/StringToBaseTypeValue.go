@@ -1,4 +1,4 @@
-package TipuJson
+package Utils
 
 import (
 	"errors"

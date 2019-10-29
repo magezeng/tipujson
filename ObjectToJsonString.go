@@ -7,14 +7,14 @@ import (
 	"strings"
 )
 
-func AnyToJsonString(srcType reflect.Type, srcValue reflect.Value) (result string, err error) {
+func objectToJsonString(srcType reflect.Type, srcValue reflect.Value) (result string, err error) {
 	switch srcType.Kind() {
 	case reflect.Ptr, reflect.Interface:
-		return AnyToJsonString(srcType.Elem(), srcValue.Elem())
+		return objectToJsonString(srcType.Elem(), srcValue.Elem())
 	case reflect.Slice:
 		subResults := make([]string, srcValue.Len())
 		for index := 0; index < srcValue.Len(); index++ {
-			subResults[index], err = AnyToJsonString(srcType.Elem(), srcValue.Index(index))
+			subResults[index], err = objectToJsonString(srcType.Elem(), srcValue.Index(index))
 			if err != nil {
 				return
 			}
@@ -32,7 +32,7 @@ func AnyToJsonString(srcType reflect.Type, srcValue reflect.Value) (result strin
 				jsonName = name
 			}
 			var subValueString string
-			subValueString, err = AnyToJsonString(typeField.Type, valueField)
+			subValueString, err = objectToJsonString(typeField.Type, valueField)
 			if err != nil {
 				return
 			}
@@ -44,7 +44,7 @@ func AnyToJsonString(srcType reflect.Type, srcValue reflect.Value) (result strin
 		subResults := make([]string, srcValue.Len())
 		for index, key := range srcValue.MapKeys() {
 			var subValueString string
-			subValueString, err = AnyToJsonString(srcValue.MapIndex(key).Type(), srcValue.MapIndex(key))
+			subValueString, err = objectToJsonString(srcValue.MapIndex(key).Type(), srcValue.MapIndex(key))
 			if err != nil {
 				return
 			}

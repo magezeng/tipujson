@@ -6,7 +6,7 @@ import (
 	. "github.com/magezeng/TipuJson/Modles"
 )
 
-func GetJsonFieldFromString(jsonString string) (field *JsonField, err error) {
+func getJsonFieldFromString(jsonString string) (field *JsonField, err error) {
 	defer func() {
 		if err == nil {
 			if tempErr := recover(); tempErr != nil {
