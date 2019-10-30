@@ -73,7 +73,13 @@ func jsonFieldToStruct(field *JsonField, waitSetType reflect.Type, waitSetValue 
 	for i := 0; i < waitSetType.NumField(); i++ {
 		valueField := waitSetValue.Field(i)
 		typeField := waitSetType.Field(i)
-		fmt.Println(typeField.Type)
+		if typeField.Anonymous {
+			err = jsonFieldToObject(field, typeField.Type, valueField)
+			if err != nil {
+				return
+			}
+			continue
+		}
 		name := typeField.Name
 		jsonName := typeField.Tag.Get("json")
 		if jsonName == "" {
