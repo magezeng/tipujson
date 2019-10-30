@@ -24,3 +24,19 @@ func TestStringToObj(t *testing.T) {
 	fmt.Println(err)
 	fmt.Println(result)
 }
+
+func TestStringToObj_TypeInType(t *testing.T) {
+	type School struct {
+		SchoolName  string `json:"school_name"`
+		SchoolStage string `json:"school_stage"`
+	}
+	type Classes struct {
+		School
+	}
+	fromString := `{"school_name":"成都信息工程大学实验小学","school_stage":"小学"}`
+	//result := []map[string]interface{}{}
+	var result Classes
+	err := JsonStringToObject(fromString, &result)
+	fmt.Println(err)
+	fmt.Println(result)
+}
