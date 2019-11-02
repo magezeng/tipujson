@@ -74,7 +74,7 @@ func objectToJsonField(srcType reflect.Type, srcValue reflect.Value) (result *Js
 	case reflect.String:
 		result = &JsonField{
 			Type:    JsonFieldTypeString,
-			Content: "\"" + fmt.Sprint(srcValue) + "\"",
+			Content: fmt.Sprint(srcValue),
 		}
 		return
 	case reflect.Bool:
