@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/TipuJson.iml" filepath="$PROJECT_DIR$/.idea/TipuJson.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/tipujson.iml" filepath="$PROJECT_DIR$/.idea/tipujson.iml" />
     </modules>
   </component>
 </project>

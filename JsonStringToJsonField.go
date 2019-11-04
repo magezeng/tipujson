@@ -1,9 +1,9 @@
-package TipuJson
+package tipujson
 
 import (
 	"errors"
-	"github.com/magezeng/TipuJson/BytesScanner"
-	. "github.com/magezeng/TipuJson/Modles"
+	"tipujson/BytesScanner"
+	. "tipujson/Modles"
 )
 
 func getJsonFieldFromString(jsonString string) (field *JsonField, err error) {

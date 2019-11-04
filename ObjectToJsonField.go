@@ -1,10 +1,10 @@
-package TipuJson
+package tipujson
 
 import (
 	"errors"
 	"fmt"
-	. "github.com/magezeng/TipuJson/Modles"
 	"reflect"
+	. "tipujson/Modles"
 )
 
 func objectToJsonField(srcType reflect.Type, srcValue reflect.Value) (result *JsonField, err error) {

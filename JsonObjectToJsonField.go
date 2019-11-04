@@ -1,1 +1,1 @@
-package TipuJson
+package tipujson
