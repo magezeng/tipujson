@@ -3,8 +3,8 @@ package tipujson
 import (
 	"errors"
 	"fmt"
+	. "github.com/magezeng/tipujson/Modles"
 	"reflect"
-	. "tipujson/Modles"
 )
 
 func objectToJsonField(srcType reflect.Type, srcValue reflect.Value) (result *JsonField, err error) {

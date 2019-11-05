@@ -3,12 +3,12 @@ Since the json of the Golang framework encountered many inconveniences in use, t
 ## Installation
 1. Install
 ```sh
-$ go get -u github.com/magezeng/TipuJson
+$ go get -u TipuJson
 ```
 2. Import it in your code:
 
 ```go
-import "github.com/magezeng/TipuJson"
+import "github.com/magezeng/tipujson"
 ```
 ##Examples
 ```go

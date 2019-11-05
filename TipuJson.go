@@ -3,8 +3,8 @@ package tipujson
 import (
 	"errors"
 	"fmt"
+	. "github.com/magezeng/tipujson/Modles"
 	"reflect"
-	. "tipujson/Modles"
 )
 
 func JsonStringToObject(src string, direction interface{}) (err error) {

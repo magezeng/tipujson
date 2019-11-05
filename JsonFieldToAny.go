@@ -3,9 +3,9 @@ package tipujson
 import (
 	"errors"
 	"fmt"
+	. "github.com/magezeng/tipujson/Modles"
+	"github.com/magezeng/tipujson/Utils"
 	"reflect"
-	. "tipujson/Modles"
-	"tipujson/Utils"
 )
 
 func jsonFieldToObject(field *JsonField, waitSetType reflect.Type, waitSetValue reflect.Value) (err error) {
