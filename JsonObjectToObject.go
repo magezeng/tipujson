@@ -42,7 +42,7 @@ func jsonObjectToObjectByReflect(jsonObject interface{}, waitSetType reflect.Typ
 func jsonObjectToInterface(jsonObject interface{}, waitSetType reflect.Type, waitSetValue reflect.Value) (err error) {
 	// 假如说双方类型未匹配上，则直接出错退出
 	if waitSetType.Kind() != reflect.Interface {
-		err = ErrorMaker.GetError(fmt.Sprintf("不能使用ReflectJsonFieldToInterface方法将JsonObject映射到%v中", waitSetType))
+		err = ErrorMaker.GetError(fmt.Sprintf("不能将JsonObject映射到%v中", waitSetType))
 		return
 	}
 	waitSetValue.Set(reflect.ValueOf(jsonObject))
@@ -53,7 +53,7 @@ func jsonObjectToMap(jsonObject interface{}, waitSetType reflect.Type, waitSetVa
 	jsonObjectType := reflect.ValueOf(jsonObject).Kind()
 	// 假如说双方类型未匹配上，则直接出错退出
 	if jsonObjectType != reflect.Map || waitSetType.Kind() != reflect.Map {
-		err = ErrorMaker.GetError(fmt.Sprintf("不能使用ReflectJsonFieldToMap方法将%s映射到%v中", jsonObjectType, waitSetType))
+		err = ErrorMaker.GetError(fmt.Sprintf("不能将%s映射到%v中", jsonObjectType, waitSetType))
 		return
 	}
 	if waitSetValue.IsNil() {
@@ -72,10 +72,9 @@ func jsonObjectToMap(jsonObject interface{}, waitSetType reflect.Type, waitSetVa
 
 func jsonObjectToStruct(jsonObject interface{}, waitSetType reflect.Type, waitSetValue reflect.Value) (err error) {
 	if waitSetType.Kind() != reflect.Struct || reflect.ValueOf(jsonObject).Kind() != reflect.Map {
-		err = ErrorMaker.GetError(fmt.Sprintf("不能使用ReflectJsonFieldToStruct方法将%s映射到%v中", reflect.ValueOf(jsonObject).Kind(), waitSetType))
+		err = ErrorMaker.GetError(fmt.Sprintf("不能将%s映射到%v中", reflect.ValueOf(jsonObject).Kind(), waitSetType))
 		return
 	}
-	//content := jsonObject.Content.(map[string]*JsonField)
 	for i := 0; i < waitSetType.NumField(); i++ {
 		valueField := waitSetValue.Field(i)
 		typeField := waitSetType.Field(i)
@@ -105,7 +104,7 @@ func jsonObjectToStruct(jsonObject interface{}, waitSetType reflect.Type, waitSe
 
 func jsonObjectToSlice(jsonObject interface{}, waitSetType reflect.Type, waitSetValue reflect.Value) (err error) {
 	if waitSetType.Kind() != reflect.Slice || reflect.ValueOf(jsonObject).Kind() != reflect.Slice {
-		err = ErrorMaker.GetError(fmt.Sprintf("不能使用ReflectJsonFieldToSlice方法将%s映射到%v中", reflect.ValueOf(jsonObject).Kind(), waitSetType))
+		err = ErrorMaker.GetError(fmt.Sprintf("不能将%s映射到%v中", reflect.ValueOf(jsonObject).Kind(), waitSetType))
 		return
 	}
 	subFieldType := waitSetType.Elem()

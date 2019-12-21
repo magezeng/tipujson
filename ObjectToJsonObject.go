@@ -1,8 +1,8 @@
 package tipujson
 
 import (
-	"errors"
 	"fmt"
+	"github.com/magezeng/tipujson/ErrorMaker"
 	"reflect"
 )
 
@@ -55,7 +55,7 @@ func objectToJsonObjectByReflect(srcType reflect.Type, srcValue reflect.Value) (
 					return
 				}
 			} else {
-				panic(errors.New(fmt.Sprintf("objectToJsonField不能将key为%v的map转为JsonField", tempKey)))
+				panic(ErrorMaker.GetError(fmt.Sprintf("不能将key为%v的map转为JsonField", tempKey)))
 			}
 		}
 		result = subResults
@@ -67,7 +67,7 @@ func objectToJsonObjectByReflect(srcType reflect.Type, srcValue reflect.Value) (
 		result = srcValue.Interface()
 		return
 	default:
-		err = errors.New(fmt.Sprintf("TipuJson暂不支持将%v转换为JsonField", srcType))
+		err = ErrorMaker.GetError(fmt.Sprintf("TipuJson暂不支持将%v转换为JsonObject", srcType))
 		return
 	}
 }
