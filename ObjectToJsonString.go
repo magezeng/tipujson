@@ -7,14 +7,19 @@ import (
 	"strings"
 )
 
-func objectToJsonString(srcType reflect.Type, srcValue reflect.Value) (result string, err error) {
+func objectToJsonString(src interface{}) (result string, err error) {
+	srcType := reflect.TypeOf(src)
+	srcValue := reflect.ValueOf(src)
+	return objectToJsonStringByReflect(srcType, srcValue)
+}
+func objectToJsonStringByReflect(srcType reflect.Type, srcValue reflect.Value) (result string, err error) {
 	switch srcType.Kind() {
 	case reflect.Ptr, reflect.Interface:
-		return objectToJsonString(srcType.Elem(), srcValue.Elem())
+		return objectToJsonStringByReflect(srcType.Elem(), srcValue.Elem())
 	case reflect.Slice:
 		subResults := make([]string, srcValue.Len())
 		for index := 0; index < srcValue.Len(); index++ {
-			subResults[index], err = objectToJsonString(srcType.Elem(), srcValue.Index(index))
+			subResults[index], err = objectToJsonStringByReflect(srcType.Elem(), srcValue.Index(index))
 			if err != nil {
 				return
 			}
@@ -32,7 +37,7 @@ func objectToJsonString(srcType reflect.Type, srcValue reflect.Value) (result st
 				jsonName = name
 			}
 			var subValueString string
-			subValueString, err = objectToJsonString(typeField.Type, valueField)
+			subValueString, err = objectToJsonStringByReflect(typeField.Type, valueField)
 			if err != nil {
 				return
 			}
@@ -44,7 +49,7 @@ func objectToJsonString(srcType reflect.Type, srcValue reflect.Value) (result st
 		subResults := make([]string, srcValue.Len())
 		for index, key := range srcValue.MapKeys() {
 			var subValueString string
-			subValueString, err = objectToJsonString(srcValue.MapIndex(key).Type(), srcValue.MapIndex(key))
+			subValueString, err = objectToJsonStringByReflect(srcValue.MapIndex(key).Type(), srcValue.MapIndex(key))
 			if err != nil {
 				return
 			}

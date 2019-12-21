@@ -105,6 +105,7 @@ func (scanner *BytesScanner) ScanNumberString() (result string) {
 	result = string(scanner.Bytes[stringStartPosition:scanner.Cursor])
 	return
 }
+
 func (scanner *BytesScanner) ScanBool() (result string) {
 	scanner.BackMoveToNotNull()
 

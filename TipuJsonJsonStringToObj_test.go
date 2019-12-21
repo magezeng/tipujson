@@ -24,6 +24,7 @@ func TestStringToObj(t *testing.T) {
 	fmt.Println(err)
 	fmt.Println(result)
 }
+
 func TestStringToObj_NormalStruct(t *testing.T) {
 	type School struct {
 		SchoolName  string `json:"school_name"`
@@ -36,6 +37,7 @@ func TestStringToObj_NormalStruct(t *testing.T) {
 	fmt.Println(err)
 	fmt.Println(result)
 }
+
 func TestStringToObj_TypeInType(t *testing.T) {
 	type School struct {
 		SchoolName  string `json:"school_name"`
