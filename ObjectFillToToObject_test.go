@@ -13,15 +13,9 @@ func TestObjectFillToObjectByStructSlice(t *testing.T) {
 		Boy  bool   `json:"boy"`
 	}
 	type School struct {
-		SchoolName  string    `json:"school_name"`
-		SchoolStage string    `json:"school_stage"`
-		Grade       int       `json:"grade"`
-		Students    []Student `json:"students"`
+		Students []Student `json:"students"`
 	}
 	var fromObject = map[string]interface{}{
-		"school_name":  "成都信息工程大学实验小学",
-		"school_stage": "小学",
-		"grade":        3,
 		"students": []map[string]interface{}{
 			{"name": "小明", "age": 10, "boy": true},
 			{"name": "小红", "age": 11, "boy": false},

@@ -27,7 +27,7 @@ func TestObjectToJsonObject(t *testing.T) {
 			{"name": "小李", "age": 10, "boy": true},
 		},
 	}
-	_, err = objectToJsonObject(MapfromObject)
+	_, err := objectToJsonObject(MapfromObject)
 	if err != nil {
 		t.Error(ErrorMaker.GetErrorStringFromErr(err))
 	}

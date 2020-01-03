@@ -39,8 +39,7 @@ func objectFillToObjectByReflectWithPositions(fromType reflect.Type, fromValue r
 	//from必须是具体的值才进行下一轮   Interface和Ptr都代表from还未指向具体的值  所以不断遍历   直到from为值为止
 	for fromType.Kind() == reflect.Interface || fromType.Kind() == reflect.Ptr {
 		if fromType.Kind() == reflect.Interface {
-			fromType = fromValue.Elem().Type()
-			fromValue = fromValue.Elem()
+			fromType = fromValue.Type()
 		} else {
 			fromType = fromType.Elem()
 			fromValue = fromValue.Elem()
@@ -80,7 +79,13 @@ func ObjectFillToSlice(fromType reflect.Type, fromValue reflect.Value, direction
 	}
 	resultSlice, effective := sliceHandler(prePositions, fromValue.Interface(), directionValue.Interface())
 	if !effective {
-		directionValue.Set(fromValue)
+		directionValue = reflect.MakeSlice(directionType, fromValue.Len(), fromValue.Len())
+		for i := 0; i < fromValue.Len(); i++ {
+			err = objectFillToObjectByReflectWithPositions(fromType.Elem(), fromValue.Index(i), directionType.Elem(), directionValue.Index(i), prePositions, sliceHandler)
+			if err != nil {
+				return
+			}
+		}
 		return
 	}
 	switch reflect.TypeOf(resultSlice) {
@@ -106,10 +111,16 @@ func ObjectFillToStruct(fromType reflect.Type, fromValue reflect.Value, directio
 	directionSubTypeMap := map[string]subType{}
 	for i := 0; i < directionType.NumField(); i++ {
 		directionSubTypeMap[directionType.Field(i).Name] = subType{directionType.Field(i), directionValue.Field(i), i}
+		jsonName := directionType.Field(i).Tag.Get("json")
+		if jsonName != "" {
+			directionSubTypeMap[jsonName] = subType{directionType.Field(i), directionValue.Field(i), i}
+		}
 	}
 	//遍历数据源对象,一一将数据映射存入到目标对象内
 	switch fromType.Kind() {
+	//fromType只可能是Map或者Struct   其它类型在本函数开始的位置已经被排除掉了
 	case reflect.Map:
+		//遍历字典   对对应的字段进行赋值
 		for _, key := range fromValue.MapKeys() {
 			keyName, isString := key.Interface().(string)
 			if !isString {
@@ -120,7 +131,7 @@ func ObjectFillToStruct(fromType reflect.Type, fromValue reflect.Value, directio
 				continue
 			}
 			err = objectFillToObjectByReflectWithPositions(
-				fromValue.MapIndex(key).Type(), fromValue.MapIndex(key).Elem(),
+				fromType.Elem(), fromValue.MapIndex(key).Elem(),
 				subDirection.waitSetType.Type, subDirection.waitSetValue,
 				append(prePositions, keyName), sliceHandler,
 			)
@@ -129,6 +140,7 @@ func ObjectFillToStruct(fromType reflect.Type, fromValue reflect.Value, directio
 			}
 		}
 	case reflect.Struct:
+		//对源结构体进行遍历，对对应字段进行赋值
 		for i := 0; i < fromType.NumField(); i++ {
 			fromValueField := fromValue.Field(i)
 			fromTypeField := fromType.Field(i)
@@ -157,6 +169,7 @@ func ObjectFillToStruct(fromType reflect.Type, fromValue reflect.Value, directio
 	return
 }
 
+/**/
 func ObjectFillToMap(fromType reflect.Type, fromValue reflect.Value, directionType reflect.Type, directionValue reflect.Value, prePositions []string, sliceHandler SliceHandler) (err error) {
 	//类型不匹配不进行映射  直接返回错误
 	if fromType.Kind() != reflect.Map && fromType.Kind() != reflect.Struct {
