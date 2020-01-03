@@ -12,7 +12,7 @@ type subType struct {
 	waitSetValue reflect.Value
 	index        int
 }
-type SliceHandler func(position []string, fromSlice interface{}, directionSlice interface{}) (interface{}, bool)
+type SliceHandler func(positions []string, fromSlice interface{}, directionSlice interface{}) (interface{}, bool)
 
 //fromObject 源数据,directionObject目标数据,sliceHandler Slice处理函数(position为Slice对应所在源数据内的位置,fromSlice该数组的源数据，directionSlice该数组的目标数据)
 //递归源数据内所有字段,一般情况下(字段类型不是Slice) 非Zero的字段覆盖掉目标数据内对应位置的字段
@@ -31,7 +31,7 @@ func ObjectFillToObjectByReflect(fromType reflect.Type, fromValue reflect.Value,
 	return objectFillToObjectByReflect(fromType, fromValue, waitSetType, waitSetValue, []string{}, sliceHandler)
 }
 
-func objectFillToObjectByReflect(fromType reflect.Type, fromValue reflect.Value, waitSetType reflect.Type, waitSetValue reflect.Value, prePositions []string, sliceHandler SliceHandler) (err error) {
+func objectFillToObjectByReflect(fromType reflect.Type, fromValue reflect.Value, directionType reflect.Type, directionValue reflect.Value, prePositions []string, sliceHandler SliceHandler) (err error) {
 	if fromValue.IsZero() {
 		//遇到空值的情况直接不进行映射
 		return
@@ -50,26 +50,46 @@ func objectFillToObjectByReflect(fromType reflect.Type, fromValue reflect.Value,
 			return
 		}
 	}
-	switch waitSetType.Kind() {
+	switch directionType.Kind() {
 	case reflect.Ptr:
-		waitSetType = waitSetType.Elem()
-		if waitSetValue.IsNil() {
-			waitSetValue.Set(reflect.New(waitSetType))
+		directionType = directionType.Elem()
+		if directionValue.IsNil() {
+			directionValue.Set(reflect.New(directionType))
 		}
-		waitSetValue = waitSetValue.Elem()
-		err = objectFillToObjectByReflect(fromType, fromValue, waitSetType, waitSetValue, prePositions, sliceHandler)
+		directionValue = directionValue.Elem()
+		err = objectFillToObjectByReflect(fromType, fromValue, directionType, directionValue, prePositions, sliceHandler)
 	case reflect.Struct:
-		err = ObjectFillToStruct(fromType, fromValue, waitSetType, waitSetValue, prePositions, sliceHandler)
+		err = ObjectFillToStruct(fromType, fromValue, directionType, directionValue, prePositions, sliceHandler)
 	case reflect.Slice:
 		//数组直接进行覆盖
-		waitSetValue.Set(fromValue)
+		err = ObjectFillToSlice(fromType, fromValue, directionType, directionValue, prePositions, sliceHandler)
 	case reflect.Interface:
 		//interface直接进行覆盖
-		waitSetValue.Set(fromValue)
+		directionValue.Set(fromValue)
 	case reflect.Map:
-		err = ObjectFillToMap(fromType, fromValue, waitSetType, waitSetValue, prePositions, sliceHandler)
+		err = ObjectFillToMap(fromType, fromValue, directionType, directionValue, prePositions, sliceHandler)
 	default:
-		err = ObjectFillToBaseType(fromType, fromValue, waitSetType, waitSetValue)
+		err = ObjectFillToBaseType(fromType, fromValue, directionType, directionValue)
+	}
+	return
+}
+func ObjectFillToSlice(fromType reflect.Type, fromValue reflect.Value, directionType reflect.Type, directionValue reflect.Value, prePositions []string, sliceHandler SliceHandler) (err error) {
+	if fromType.Kind() != reflect.Slice || directionType.Kind() != reflect.Slice {
+		err = ErrorMaker.GetError(fmt.Sprintf("不能将%v映射到%v中", fromType, directionType))
+		return
+	}
+	resultSlice, effective := sliceHandler(prePositions, fromValue.Interface(), directionValue.Interface())
+	if !effective {
+		directionValue.Set(fromValue)
+		return
+	}
+	switch reflect.TypeOf(resultSlice) {
+	case nil:
+		directionValue.Set(reflect.New(directionType))
+	case directionType:
+		directionValue.Set(reflect.ValueOf(resultSlice))
+	default:
+		err = ErrorMaker.GetError("Slice处理函数返回的类型不对")
 	}
 	return
 }
