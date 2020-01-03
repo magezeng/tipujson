@@ -19,19 +19,19 @@ type SliceHandler func(positions []string, fromSlice interface{}, directionSlice
 //该值类型为Slice时分几种情况特殊处理,情况分别如下:
 //1.Slice处理函数为nil时:按照一般情况进行处理
 //2.Slice处理函数不为nil时: 调用处理函数 得到两个变量分别为  覆盖结果和生效与否，如果该次处理结果为不生效，则该字段按照一般情况处理，否则将返回结果直接覆盖到目标字段
-func ObjectFillToObject(fromObject interface{}, directionObject interface{}, sliceHandler SliceHandler) (err error) {
+func objectFillToObject(fromObject interface{}, directionObject interface{}, sliceHandler SliceHandler) (err error) {
 	directionType := reflect.TypeOf(directionObject)
 	directionValue := reflect.ValueOf(directionObject)
 	fromType := reflect.TypeOf(fromObject)
 	fromValue := reflect.ValueOf(fromObject)
-	return ObjectFillToObjectByReflect(fromType, fromValue, directionType, directionValue, sliceHandler)
+	return objectFillToObjectByReflect(fromType, fromValue, directionType, directionValue, sliceHandler)
 }
 
-func ObjectFillToObjectByReflect(fromType reflect.Type, fromValue reflect.Value, waitSetType reflect.Type, waitSetValue reflect.Value, sliceHandler SliceHandler) (err error) {
-	return objectFillToObjectByReflect(fromType, fromValue, waitSetType, waitSetValue, []string{}, sliceHandler)
+func objectFillToObjectByReflect(fromType reflect.Type, fromValue reflect.Value, waitSetType reflect.Type, waitSetValue reflect.Value, sliceHandler SliceHandler) (err error) {
+	return objectFillToObjectByReflectWithPositions(fromType, fromValue, waitSetType, waitSetValue, []string{}, sliceHandler)
 }
 
-func objectFillToObjectByReflect(fromType reflect.Type, fromValue reflect.Value, directionType reflect.Type, directionValue reflect.Value, prePositions []string, sliceHandler SliceHandler) (err error) {
+func objectFillToObjectByReflectWithPositions(fromType reflect.Type, fromValue reflect.Value, directionType reflect.Type, directionValue reflect.Value, prePositions []string, sliceHandler SliceHandler) (err error) {
 	if fromValue.IsZero() {
 		//遇到空值的情况直接不进行映射
 		return
@@ -57,7 +57,7 @@ func objectFillToObjectByReflect(fromType reflect.Type, fromValue reflect.Value,
 			directionValue.Set(reflect.New(directionType))
 		}
 		directionValue = directionValue.Elem()
-		err = objectFillToObjectByReflect(fromType, fromValue, directionType, directionValue, prePositions, sliceHandler)
+		err = objectFillToObjectByReflectWithPositions(fromType, fromValue, directionType, directionValue, prePositions, sliceHandler)
 	case reflect.Struct:
 		err = ObjectFillToStruct(fromType, fromValue, directionType, directionValue, prePositions, sliceHandler)
 	case reflect.Slice:
@@ -119,7 +119,7 @@ func ObjectFillToStruct(fromType reflect.Type, fromValue reflect.Value, directio
 			if !directionHaveKey {
 				continue
 			}
-			err = objectFillToObjectByReflect(
+			err = objectFillToObjectByReflectWithPositions(
 				fromValue.MapIndex(key).Type(), fromValue.MapIndex(key).Elem(),
 				subDirection.waitSetType.Type, subDirection.waitSetValue,
 				append(prePositions, keyName), sliceHandler,
@@ -144,7 +144,7 @@ func ObjectFillToStruct(fromType reflect.Type, fromValue reflect.Value, directio
 			if !directionHaveKey {
 				continue
 			}
-			err = objectFillToObjectByReflect(
+			err = objectFillToObjectByReflectWithPositions(
 				fromTypeField.Type, fromValueField,
 				subDirection.waitSetType.Type, subDirection.waitSetValue,
 				append(prePositions, keyName), sliceHandler,
@@ -184,7 +184,7 @@ func ObjectFillToMap(fromType reflect.Type, fromValue reflect.Value, directionTy
 					continue
 				}
 				subDirectionValue := reflect.New(subDirectionType)
-				err = objectFillToObjectByReflect(
+				err = objectFillToObjectByReflectWithPositions(
 					fromValue.MapIndex(key).Type(), fromValue.MapIndex(key).Elem(),
 					subDirectionType, subDirectionValue,
 					append(prePositions, keyName), sliceHandler,
@@ -207,7 +207,7 @@ func ObjectFillToMap(fromType reflect.Type, fromValue reflect.Value, directionTy
 				}
 				keyName := fromTypeField.Name
 				subDirectionValue := reflect.New(subDirectionType)
-				err = objectFillToObjectByReflect(
+				err = objectFillToObjectByReflectWithPositions(
 					fromTypeField.Type, fromValueField,
 					subDirectionType, subDirectionValue,
 					append(prePositions, keyName), sliceHandler,

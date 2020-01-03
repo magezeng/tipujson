@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestObjectFillToObject1(t *testing.T) {
+func TestObjectFillToObjectByStructSlice(t *testing.T) {
 	//层级关系：struct>slice>map
 	type Student struct {
 		Name string `json:"name"`
@@ -32,19 +32,18 @@ func TestObjectFillToObject1(t *testing.T) {
 	var sliceFrom interface{} = fromObject
 	school := School{}
 	student := Student{}
-	err := ObjectFillToObject(fromObject, &school, func(position []string, fromSlice interface{}, directionSlice interface{}) (i interface{}, b bool) {
+	err := objectFillToObject(fromObject, &school, func(position []string, fromSlice interface{}, directionSlice interface{}) (i interface{}, b bool) {
 		position = slicePosition
 		fromSlice = sliceFrom
 		directionSlice = student
 		return
 	})
 	if err != nil {
-		fmt.Println(err)
+		t.Error("层级为：struct>slice>map填充出错")
 	}
-	fmt.Println(school)
 }
 
-func TestObjectFillToObject2(t *testing.T) {
+func TestObjectFillToObjectByStructSliceStruct(t *testing.T) {
 	//层级关系:struct>slice>struct>
 	type Hobby struct {
 		Swim  bool   `json:"swim"`
@@ -69,19 +68,19 @@ func TestObjectFillToObject2(t *testing.T) {
 	var sliceFrom interface{} = fromObject
 	class := Class{}
 	student := Student{}
-	err := ObjectFillToObject(fromObject, &class, func(position []string, fromSlice interface{}, directionSlice interface{}) (i interface{}, b bool) {
+	err := objectFillToObject(fromObject, &class, func(position []string, fromSlice interface{}, directionSlice interface{}) (i interface{}, b bool) {
 		position = slicePosition
 		fromSlice = sliceFrom
 		directionSlice = student
 		return
 	})
 	if err != nil {
-		fmt.Println(err)
+		t.Error("层级为：struct>slice>struct填充出错")
 	}
 	fmt.Println(class)
 }
 
-func TestObjectFillToObject3(t *testing.T) {
+func TestObjectFillToObjectStructStructSlice(t *testing.T) {
 	//层级关系:struct>struct>slice
 	type Class struct {
 		ClassName string `json:"class_name"`
@@ -110,14 +109,17 @@ func TestObjectFillToObject3(t *testing.T) {
 	var sliceFrom interface{} = fromObject
 	school := School{}
 	grade := Grade{}
-	err := ObjectFillToObject(fromObject, &school, func(position []string, fromSlice interface{}, directionSlice interface{}) (i interface{}, b bool) {
+	err := objectFillToObject(fromObject, &school, func(position []string, fromSlice interface{}, directionSlice interface{}) (i interface{}, b bool) {
 		position = slicePosition
 		fromSlice = sliceFrom
 		directionSlice = grade
 		return
 	})
 	if err != nil {
-		fmt.Println(err)
+		t.Error("层级为：struct>struct>slice填充出错")
 	}
-	fmt.Println(school)
+}
+
+func TestObjectFillToObjectByStructSlicePrt(t *testing.T) {
+	//层级关系：Struct/Slice
 }
