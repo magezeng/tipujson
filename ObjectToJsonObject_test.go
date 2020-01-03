@@ -1,7 +1,6 @@
 package tipujson
 
 import (
-	"github.com/magezeng/tipujson/ErrorMaker"
 	"testing"
 )
 
@@ -17,22 +16,63 @@ func TestObjectToJsonObject(t *testing.T) {
 		Students    []Student `json:"students"`
 	}
 	//map类型的测试
-	MapfromObject := map[string]interface{}{
+	MapFromObject := map[string]interface{}{
 		"school_name":  "成都信息工程大学实验小学",
 		"school_stage": "小学",
-		"grade":        3,
+
+		"grade": 3,
 		"students": []map[string]interface{}{
 			{"name": "小明", "age": 10, "boy": true},
 			{"name": "小红", "age": 11, "boy": false},
 			{"name": "小李", "age": 10, "boy": true},
 		},
 	}
-	_, err = objectToJsonObject(MapfromObject)
+	_, err := objectToJsonObject(MapFromObject)
 	if err != nil {
-		t.Error(ErrorMaker.GetErrorStringFromErr(err))
+		//t.Error(ErrorMaker.GetErrorStringFromErr(err))
+		t.Error("map转object失败")
 	}
-	////slice类型测试
-	//SlicefromObject:=
-	//
-
+	//slice类型测试
+	SliceFromObject := []Student{
+		{
+			Name: "小明",
+			Age:  10,
+		},
+		{
+			Name: "小红",
+			Age:  11,
+		},
+		{
+			Name: "小李",
+			Age:  10,
+		},
+	}
+	_, err = objectToJsonObject(SliceFromObject)
+	if err != nil {
+		t.Error("slice转object失败")
+	}
+	//struct类型测试
+	school := School{
+		SchoolName:  "成都信息工程大学实验小学",
+		SchoolStage: "小学",
+		Grade:       4,
+		Students: []Student{
+			{
+				Name: "小明",
+				Age:  10,
+			},
+			{
+				Name: "小红",
+				Age:  11,
+			},
+			{
+				Name: "小李",
+				Age:  10,
+			},
+		},
+	}
+	_, err = objectToJsonObject(school)
+	if err != nil {
+		t.Error("struct转object失败")
+	}
 }

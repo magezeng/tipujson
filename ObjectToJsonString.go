@@ -14,8 +14,10 @@ func objectToJsonString(src interface{}) (result string, err error) {
 }
 func objectToJsonStringByReflect(srcType reflect.Type, srcValue reflect.Value) (result string, err error) {
 	switch srcType.Kind() {
-	case reflect.Ptr, reflect.Interface:
+	case reflect.Ptr:
 		return objectToJsonStringByReflect(srcType.Elem(), srcValue.Elem())
+	case reflect.Interface:
+		return objectToJsonStringByReflect(srcValue.Elem().Type(), srcValue.Elem())
 	case reflect.Slice:
 		subResults := make([]string, srcValue.Len())
 		for index := 0; index < srcValue.Len(); index++ {
