@@ -6,6 +6,11 @@ import (
 	"reflect"
 )
 
+//fromObject 源数据,directionObject目标数据,sliceHandler Slice处理函数(position为Slice对应所在源数据内的位置,fromSlice该数组的源数据，directionSlice该数组的目标数据)
+//递归源数据内所有字段,一般情况下(字段类型不是Slice) 非Zero的字段覆盖掉目标数据内对应位置的字段
+//该值类型为Slice时分几种情况特殊处理,情况分别如下:
+//1.Slice处理函数为nil时:按照一般情况进行处理
+//2.Slice处理函数不为nil时: 调用处理函数 得到两个变量分别为  覆盖结果和生效与否，如果该次处理结果为不生效，则该字段按照一般情况处理，否则将返回结果直接覆盖到目标字段
 func ObjectFillToObject(fromObject interface{}, directionObject interface{}, sliceHandler func(position []string, fromSlice interface{}, directionSlice interface{}) (interface{}, bool)) (err error) {
 
 	directionType := reflect.TypeOf(directionObject)
