@@ -79,13 +79,14 @@ func ObjectFillToSlice(fromType reflect.Type, fromValue reflect.Value, direction
 	}
 	resultSlice, effective := sliceHandler(prePositions, fromValue.Interface(), directionValue.Interface())
 	if !effective {
-		directionValue = reflect.MakeSlice(directionType, fromValue.Len(), fromValue.Len())
+		tempDirectionValue := reflect.MakeSlice(directionType, fromValue.Len(), fromValue.Len())
 		for i := 0; i < fromValue.Len(); i++ {
-			err = objectFillToObjectByReflectWithPositions(fromType.Elem(), fromValue.Index(i), directionType.Elem(), directionValue.Index(i), prePositions, sliceHandler)
+			err = objectFillToObjectByReflectWithPositions(fromType.Elem(), fromValue.Index(i), directionType.Elem(), tempDirectionValue.Index(i), prePositions, sliceHandler)
 			if err != nil {
 				return
 			}
 		}
+		directionValue.Set(tempDirectionValue)
 		return
 	}
 	switch reflect.TypeOf(resultSlice) {
