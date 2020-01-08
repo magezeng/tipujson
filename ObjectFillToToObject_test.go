@@ -270,6 +270,57 @@ func TestObjectFillToObject_StructToMap(t *testing.T) {
 	}
 }
 
+func TestObjectFillToObject_StructToPtr(t *testing.T) {
+	var fromObject = Grade{
+		Name:   "没希望的一年级",
+		Lesson: []string{"数学", "英语"},
+		Classes: &Class{
+			Name:   "小红",
+			Age:    15.5,
+			Number: 156,
+			Boy:    false,
+		},
+	}
+	var grade *Grade
+	err := objectFillToObject(fromObject, &grade, func(position []string, fromSlice interface{}, directionSlice interface{}) (i interface{}, b bool) {
+		return
+	})
+	if err != nil {
+		t.Error(ErrorMaker.GetErrorStringFromErr(err))
+	}
+	if grade == nil {
+		t.Error("被填充指针为空")
+	}
+	if grade.Name != "没希望的一年级" {
+		t.Error("数组中Name项填充错误")
+	}
+	if grade.Lesson == nil {
+		t.Error("数组中Lesson项填充为空")
+	}
+	if len(grade.Lesson) != 2 {
+		t.Error("数组中Lesson项长度填充错误")
+	}
+	if (grade.Lesson[0] == "语文" && grade.Lesson[1] != "英语") || (grade.Lesson[0] == "英语" && grade.Lesson[1] != "语文") {
+		t.Error("数组中Lesson项内容填充错误")
+	}
+	if grade.Classes == nil {
+		t.Error("数组中Classes项填充为空")
+	}
+	if grade.Classes.Age != 15.5 {
+		t.Error("Map对象的classes字段age项填充错误")
+	}
+	if grade.Classes.Boy != false {
+		t.Error("Map对象的classes字段age项填充错误")
+	}
+	if grade.Classes.Name != "小红" {
+		t.Error("Map对象的classes字段age项填充错误")
+	}
+	if grade.Classes.Number != 156 {
+		t.Error("Map对象的classes字段age项填充错误")
+	}
+
+}
+
 func TestObjectFillToObject_SliceToSlice(t *testing.T) {
 	var fromObject = []Grade{
 		{
@@ -372,57 +423,6 @@ func TestObjectFillToObject_SliceToPtr(t *testing.T) {
 	if grade.Classes.Number != 156 {
 		t.Error("Map对象的classes字段age项填充错误")
 	}
-}
-
-func TestObjectFillToObject_StructToPtr(t *testing.T) {
-	var fromObject = Grade{
-		Name:   "没希望的一年级",
-		Lesson: []string{"数学", "英语"},
-		Classes: &Class{
-			Name:   "小红",
-			Age:    15.5,
-			Number: 156,
-			Boy:    false,
-		},
-	}
-	var grade *Grade
-	err := objectFillToObject(fromObject, &grade, func(position []string, fromSlice interface{}, directionSlice interface{}) (i interface{}, b bool) {
-		return
-	})
-	if err != nil {
-		t.Error(ErrorMaker.GetErrorStringFromErr(err))
-	}
-	if grade == nil {
-		t.Error("被填充指针为空")
-	}
-	if grade.Name != "没希望的一年级" {
-		t.Error("数组中Name项填充错误")
-	}
-	if grade.Lesson == nil {
-		t.Error("数组中Lesson项填充为空")
-	}
-	if len(grade.Lesson) != 2 {
-		t.Error("数组中Lesson项长度填充错误")
-	}
-	if (grade.Lesson[0] == "语文" && grade.Lesson[1] != "英语") || (grade.Lesson[0] == "英语" && grade.Lesson[1] != "语文") {
-		t.Error("数组中Lesson项内容填充错误")
-	}
-	if grade.Classes == nil {
-		t.Error("数组中Classes项填充为空")
-	}
-	if grade.Classes.Age != 15.5 {
-		t.Error("Map对象的classes字段age项填充错误")
-	}
-	if grade.Classes.Boy != false {
-		t.Error("Map对象的classes字段age项填充错误")
-	}
-	if grade.Classes.Name != "小红" {
-		t.Error("Map对象的classes字段age项填充错误")
-	}
-	if grade.Classes.Number != 156 {
-		t.Error("Map对象的classes字段age项填充错误")
-	}
-
 }
 
 func TestObjectFillToObject_PtrToPtr(t *testing.T) {
