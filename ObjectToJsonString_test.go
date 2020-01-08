@@ -6,6 +6,7 @@ import (
 	"testing"
 )
 
+//测试map类型
 func TestObjectToJsonString_mapToJsonString(t *testing.T) {
 	MapFromObject := map[string]interface{}{
 		"school_name":  "成都信息工程大学实验小学",
@@ -79,6 +80,8 @@ func TestObjectToJsonString_mapToJsonString(t *testing.T) {
 		t.Error("MapObject获取的结果字符串取缔掉所有应该匹配的对象之后，字符串结果仍然不为空")
 	}
 }
+
+//测试切片类型
 func TestObjectToJsonString_SliceToJsonString(t *testing.T) {
 	SliceFromObject := []Student{
 		{
@@ -122,6 +125,7 @@ func TestObjectToJsonString_SliceToJsonString(t *testing.T) {
 	}
 }
 
+//测试结构体类型
 func TestObjectToJsonString_StructToJsonString(t *testing.T) {
 	structFromObject := School{
 		SchoolName:  "成都信息工程大学实验小学",
@@ -144,6 +148,79 @@ func TestObjectToJsonString_StructToJsonString(t *testing.T) {
 	}
 	//测试结果
 	testResult, err := objectToJsonString(structFromObject)
+	if err != nil {
+		t.Error("structObject转jsonString失败")
+	}
+	var contain bool
+	var subRexString string
+	subRexString = `\{\s*"name"\s*:\s*"小明"\s*,\s*"age"\s*:\s*10\s*\}`
+	if contain, testResult = containSubString(testResult, subRexString); !contain {
+		t.Error("结果内未包含" + subRexString)
+	}
+	subRexString = `\{\s*"name"\s*:\s*"小红"\s*,\s*"age"\s*:\s*11\s*\}`
+	if contain, testResult = containSubString(testResult, subRexString); !contain {
+		t.Error("结果内未包含" + subRexString)
+	}
+	subRexString = `\{\s*"name"\s*:\s*"小李"\s*,\s*"age"\s*:\s*12\s*\}`
+	if contain, testResult = containSubString(testResult, subRexString); !contain {
+		t.Error("结果内未包含" + subRexString)
+	}
+	subRexString = `\s*"school_name"\s*:\s*"成都信息工程大学实验小学"\s*`
+	if contain, testResult = containSubString(testResult, subRexString); !contain {
+		t.Error("结果内未包含" + subRexString)
+	}
+	subRexString = `\s*"school_stage"\s*:\s*"小学"\s*`
+	if contain, testResult = containSubString(testResult, subRexString); !contain {
+		t.Error("结果内未包含" + subRexString)
+	}
+	subRexString = `\s*"grade"\s*:\s*4\s*`
+	if contain, testResult = containSubString(testResult, subRexString); !contain {
+		t.Error("结果内未包含" + subRexString)
+	}
+	subRexString = `\s*\[\s*,\s*,\s*\]`
+	if contain, testResult = containSubString(testResult, subRexString); !contain {
+		t.Error("结果内未包含" + subRexString)
+	}
+	subRexString = `\s*,\s*,\s*,`
+	if contain, testResult = containSubString(testResult, subRexString); !contain {
+		t.Error("结果内未包含" + subRexString)
+	}
+	subRexString = `\s*"students"\s*:\s*`
+	if contain, testResult = containSubString(testResult, subRexString); !contain {
+		t.Error("结果内未包含" + subRexString)
+	}
+	subRexString = `\{\s*\}`
+	if contain, testResult = containSubString(testResult, subRexString); !contain {
+		t.Error("结果内未包含" + subRexString)
+	}
+	if len(testResult) > 0 {
+		t.Error("structObject获取的结果字符串取缔掉所有应该匹配的对象之后，字符串结果仍然不为空")
+	}
+}
+
+//测试指针类型
+func TestObjectToJsonString_PtrToJsonString(t *testing.T) {
+	structFromObject := School{
+		SchoolName:  "成都信息工程大学实验小学",
+		SchoolStage: "小学",
+		Grade:       4,
+		Students: []Student{
+			{
+				Name: "小明",
+				Age:  10,
+			},
+			{
+				Name: "小红",
+				Age:  11,
+			},
+			{
+				Name: "小李",
+				Age:  12,
+			},
+		},
+	}
+	//测试结果
+	testResult, err := objectToJsonString(&structFromObject)
 	if err != nil {
 		t.Error("structObject转jsonString失败")
 	}

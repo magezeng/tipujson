@@ -68,6 +68,7 @@ func TestObjectToJsonObject_MapToJsonObject(t *testing.T) {
 	}
 }
 
+//切片类型的测试
 func TestObjectToJsonObject_SliceToJsonObject(t *testing.T) {
 	SliceFromObject := []Student{
 		{
@@ -118,6 +119,7 @@ func TestObjectToJsonObject_SliceToJsonObject(t *testing.T) {
 	}
 }
 
+//结构体类型的测试
 func TestObjectToJsonObject_StructToJsonObject(t *testing.T) {
 	school := School{
 		SchoolName:  "成都信息工程大学实验小学",
@@ -174,9 +176,9 @@ func TestObjectToJsonObject_StructToJsonObject(t *testing.T) {
 			t.Error("structObject转jsonObject失败,结果转换不完整！")
 		}
 	}
-
 }
 
+//指针类型的测试
 func TestObjectToJsonObject_PtrToJsonObject(t *testing.T) {
 	var structPtr *School
 	school := School{
@@ -191,8 +193,48 @@ func TestObjectToJsonObject_PtrToJsonObject(t *testing.T) {
 		},
 	}
 	structPtr = &school
-	_, err := objectToJsonObject(structPtr)
+	testResult, err := objectToJsonObject(structPtr)
 	if err != nil {
 		t.Error("ptrObject转jsonObject失败")
+	}
+	structResult := testResult.(map[string]interface{})
+	if _, ok := structResult["school_name"]; !ok {
+		t.Error("ptrObject转jsonObject失败,结果中未包含key:school_name")
+	}
+	if structResult["school_name"] != "成都信息工程大学实验小学" {
+		t.Error("ptrObject转jsonObject失败,结果中未包含value:成都信息工程大学实验小学")
+	}
+	if _, ok := structResult["school_stage"]; !ok {
+		t.Error("ptrObject转jsonObject失败,结果中未包含key:school_stage")
+	}
+	if structResult["school_stage"] != "小学" {
+		t.Error("structObject转jsonObject失败,结果中未包含value:小学")
+	}
+	if _, ok := structResult["grade"]; !ok {
+		t.Error("ptrObject转jsonObject失败,结果中未包含key:grade")
+	}
+	if structResult["grade"] != 4 {
+		t.Error("ptrObject转jsonObject失败,结果中未包含value:3")
+	}
+	if _, ok := structResult["students"]; !ok {
+		t.Error("ptrObject转jsonObject失败,结果中未包含key:students")
+	}
+	if len(structResult["students"].([]interface{})) != 1 {
+		t.Error("ptrObject转jsonObject失败,获取到键名为students键值里面不是长度为3的map切片")
+	}
+	//
+	boolSlice := []bool{false}
+	for _, subResult := range structResult["students"].([]interface{}) {
+		tempResult := subResult.(map[string]interface{})
+		if tempResult["name"] == "小明" && !boolSlice[0] {
+			if tempResult["age"] == 10 {
+				boolSlice[0] = true
+			}
+		}
+	}
+	for _, v := range boolSlice {
+		if !v {
+			t.Error("structObject转jsonObject失败,结果转换不完整！")
+		}
 	}
 }
