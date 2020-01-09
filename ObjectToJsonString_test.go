@@ -28,51 +28,60 @@ func TestObjectToJsonString_mapToJsonString(t *testing.T) {
 	if contain, testResult = containSubString(testResult, subRexString); !contain {
 		t.Error("结果内未包含" + subRexString)
 	}
+	//当前JsonString:{"school_name":"成都信息工程大学实验小学","school_stage":"小学","grade":3,
+	// "students":[{"name":"小明","age":10,"boy":true},{"age":11,"boy":false,"name":"小红"}]}
 	subRexString = `"school_stage"\s*:\s*"小学"`
 	if contain, testResult = containSubString(testResult, subRexString); !contain {
 		t.Error("结果内未包含" + subRexString)
 	}
+	//当前jsonString:{,,"grade":3,"students":[{"name":"小明","age":10,"boy":true},{"name":"小红","age":11,"boy":false}]}
 	subRexString = `"grade"\s*:\s*3`
 	if contain, testResult = containSubString(testResult, subRexString); !contain {
 		t.Error("结果内未包含" + subRexString)
 	}
+	//当前JsonString:{,,,"students":[{"boy":true,"name":"小明","age":10},{"name":"小红","age":11,"boy":false}]}
 	subRexString = `"age"\s*:\s*10`
 	if contain, testResult = containSubString(testResult, subRexString); !contain {
 		t.Error("结果内未包含" + subRexString)
 	}
+	//当前JsonString:{,,"students":[{"name":"小明",,"boy":true},{"name":"小红","age":11,"boy":false}]}
 	subRexString = `"age"\s*:\s*11`
 	if contain, testResult = containSubString(testResult, subRexString); !contain {
 		t.Error("结果内未包含" + subRexString)
 	}
+
+	//当前JsonString:{,,,"students":[{"boy":true,"name":"小明",},{"name":"小红",,"boy":false}]}
 	subRexString = `"name"\s*:\s*"小明"`
 	if contain, testResult = containSubString(testResult, subRexString); !contain {
 		t.Error("结果内未包含" + subRexString)
 	}
+	//当前JsonString:{,,"students":[{,,"boy":true},{"name":"小红",,"boy":false}],}
 	subRexString = `"name"\s*:\s*"小红"`
 	if contain, testResult = containSubString(testResult, subRexString); !contain {
 		t.Error("结果内未包含" + subRexString)
 	}
+	//当前JsonString:{"students":[{,,"boy":true},{,,"boy":false}],,,}
 	subRexString = `"boy"\s*:\s*true`
 	if contain, testResult = containSubString(testResult, subRexString); !contain {
 		t.Error("结果内未包含" + subRexString)
 	}
+	//当前JsonString:{,,,"students":[{,,},{,,"boy":false}]}
 	subRexString = `"boy"\s*:\s*false`
 	if contain, testResult = containSubString(testResult, subRexString); !contain {
 		t.Error("结果内未包含" + subRexString)
 	}
-	subRexString = `\s*,\s*,\s*,\s*`
-	if contain, testResult = containSubString(testResult, subRexString); !contain {
-		t.Error("结果内未包含" + subRexString)
-	}
+	//当前JsonString:{,,,"students":[{,,},{,,}]}
 	subRexString = `\s*\{\s*,\s*,\s*\}\s*,\s*\{\s*,\s*,\s*\}\s*`
 	if contain, testResult = containSubString(testResult, subRexString); !contain {
 		t.Error("结果内未包含" + subRexString)
 	}
+	//{,,,"students":[]}
 	subRexString = `"students"\s*:\s*\[\s*\]`
 	if contain, testResult = containSubString(testResult, subRexString); !contain {
 		t.Error("结果内未包含" + subRexString)
 	}
-	subRexString = `\s*\{\s*\}\s*`
+	//{,,,}
+	subRexString = `{\s*,\s*,\s*,\s*}`
 	if contain, testResult = containSubString(testResult, subRexString); !contain {
 		t.Error("结果内未包含" + subRexString)
 	}
@@ -104,18 +113,22 @@ func TestObjectToJsonString_SliceToJsonString(t *testing.T) {
 	}
 	var contain bool
 	var subRexString string
+	//[{"name":"小明","age":10},{"name":"小红","age":11},{"name":"小李","age":12}]
 	subRexString = `\{\s*"name"\s*:\s*"小明"\s*,\s*"age"\s*:\s*10\s*\}`
 	if contain, testResult = containSubString(testResult, subRexString); !contain {
 		t.Error("结果内未包含" + subRexString)
 	}
+	//[,{"name":"小红","age":11},{"name":"小李","age":12}]
 	subRexString = `\{\s*"name"\s*:\s*"小红"\s*,\s*"age"\s*:\s*11\s*\}`
 	if contain, testResult = containSubString(testResult, subRexString); !contain {
 		t.Error("结果内未包含" + subRexString)
 	}
+	//[,,{"name":"小李","age":12}]
 	subRexString = `\{\s*"name"\s*:\s*"小李"\s*,\s*"age"\s*:\s*12\s*\}`
 	if contain, testResult = containSubString(testResult, subRexString); !contain {
 		t.Error("结果内未包含" + subRexString)
 	}
+	//[,,]
 	subRexString = `\[\s*,\s*,\s*\]`
 	if contain, testResult = containSubString(testResult, subRexString); !contain {
 		t.Error("结果内未包含" + subRexString)
@@ -153,42 +166,52 @@ func TestObjectToJsonString_StructToJsonString(t *testing.T) {
 	}
 	var contain bool
 	var subRexString string
+	//{"school_name":"成都信息工程大学实验小学","school_stage":"小学","grade":4,"students":[{"name":"小明","age":10},{"name":"小红","age":11},{"name":"小李","age":12}]}
 	subRexString = `\{\s*"name"\s*:\s*"小明"\s*,\s*"age"\s*:\s*10\s*\}`
 	if contain, testResult = containSubString(testResult, subRexString); !contain {
 		t.Error("结果内未包含" + subRexString)
 	}
+	//{"school_name":"成都信息工程大学实验小学","school_stage":"小学","grade":4,"students":[,{"name":"小红","age":11},{"name":"小李","age":12}]}
 	subRexString = `\{\s*"name"\s*:\s*"小红"\s*,\s*"age"\s*:\s*11\s*\}`
 	if contain, testResult = containSubString(testResult, subRexString); !contain {
 		t.Error("结果内未包含" + subRexString)
 	}
+	//{"school_name":"成都信息工程大学实验小学","school_stage":"小学","grade":4,"students":[,,{"name":"小李","age":12}]}
 	subRexString = `\{\s*"name"\s*:\s*"小李"\s*,\s*"age"\s*:\s*12\s*\}`
 	if contain, testResult = containSubString(testResult, subRexString); !contain {
 		t.Error("结果内未包含" + subRexString)
 	}
+	//{"school_name":"成都信息工程大学实验小学","school_stage":"小学","grade":4,"students":[,,]}
 	subRexString = `\s*"school_name"\s*:\s*"成都信息工程大学实验小学"\s*`
 	if contain, testResult = containSubString(testResult, subRexString); !contain {
 		t.Error("结果内未包含" + subRexString)
 	}
+	//{,"school_stage":"小学","grade":4,"students":[,,]}
 	subRexString = `\s*"school_stage"\s*:\s*"小学"\s*`
 	if contain, testResult = containSubString(testResult, subRexString); !contain {
 		t.Error("结果内未包含" + subRexString)
 	}
+	//{,,"grade":4,"students":[,,]}
 	subRexString = `\s*"grade"\s*:\s*4\s*`
 	if contain, testResult = containSubString(testResult, subRexString); !contain {
 		t.Error("结果内未包含" + subRexString)
 	}
+	//{,,,"students":[,,]}
 	subRexString = `\s*\[\s*,\s*,\s*\]`
 	if contain, testResult = containSubString(testResult, subRexString); !contain {
 		t.Error("结果内未包含" + subRexString)
 	}
+	//{,,,"students":}
 	subRexString = `\s*,\s*,\s*,`
 	if contain, testResult = containSubString(testResult, subRexString); !contain {
 		t.Error("结果内未包含" + subRexString)
 	}
+	//{"students":}
 	subRexString = `\s*"students"\s*:\s*`
 	if contain, testResult = containSubString(testResult, subRexString); !contain {
 		t.Error("结果内未包含" + subRexString)
 	}
+	//{}
 	subRexString = `\{\s*\}`
 	if contain, testResult = containSubString(testResult, subRexString); !contain {
 		t.Error("结果内未包含" + subRexString)
@@ -226,42 +249,52 @@ func TestObjectToJsonString_PtrToJsonString(t *testing.T) {
 	}
 	var contain bool
 	var subRexString string
+	//{"school_name":"成都信息工程大学实验小学","school_stage":"小学","grade":4,"students":[{"name":"小明","age":10},{"name":"小红","age":11},{"name":"小李","age":12}]}
 	subRexString = `\{\s*"name"\s*:\s*"小明"\s*,\s*"age"\s*:\s*10\s*\}`
 	if contain, testResult = containSubString(testResult, subRexString); !contain {
 		t.Error("结果内未包含" + subRexString)
 	}
+	//{"school_name":"成都信息工程大学实验小学","school_stage":"小学","grade":4,"students":[,{"name":"小红","age":11},{"name":"小李","age":12}]}
 	subRexString = `\{\s*"name"\s*:\s*"小红"\s*,\s*"age"\s*:\s*11\s*\}`
 	if contain, testResult = containSubString(testResult, subRexString); !contain {
 		t.Error("结果内未包含" + subRexString)
 	}
+	//{"school_name":"成都信息工程大学实验小学","school_stage":"小学","grade":4,"students":[,,{"name":"小李","age":12}]}
 	subRexString = `\{\s*"name"\s*:\s*"小李"\s*,\s*"age"\s*:\s*12\s*\}`
 	if contain, testResult = containSubString(testResult, subRexString); !contain {
 		t.Error("结果内未包含" + subRexString)
 	}
+	//{"school_name":"成都信息工程大学实验小学","school_stage":"小学","grade":4,"students":[,,]}
 	subRexString = `\s*"school_name"\s*:\s*"成都信息工程大学实验小学"\s*`
 	if contain, testResult = containSubString(testResult, subRexString); !contain {
 		t.Error("结果内未包含" + subRexString)
 	}
+	//{,"school_stage":"小学","grade":4,"students":[,,]}
 	subRexString = `\s*"school_stage"\s*:\s*"小学"\s*`
 	if contain, testResult = containSubString(testResult, subRexString); !contain {
 		t.Error("结果内未包含" + subRexString)
 	}
+	//{,,"grade":4,"students":[,,]}
 	subRexString = `\s*"grade"\s*:\s*4\s*`
 	if contain, testResult = containSubString(testResult, subRexString); !contain {
 		t.Error("结果内未包含" + subRexString)
 	}
+	//{,,,"students":[,,]}
 	subRexString = `\s*\[\s*,\s*,\s*\]`
 	if contain, testResult = containSubString(testResult, subRexString); !contain {
 		t.Error("结果内未包含" + subRexString)
 	}
+	//{,,,"students":}
 	subRexString = `\s*,\s*,\s*,`
 	if contain, testResult = containSubString(testResult, subRexString); !contain {
 		t.Error("结果内未包含" + subRexString)
 	}
+	//{"students":}
 	subRexString = `\s*"students"\s*:\s*`
 	if contain, testResult = containSubString(testResult, subRexString); !contain {
 		t.Error("结果内未包含" + subRexString)
 	}
+	//{}
 	subRexString = `\{\s*\}`
 	if contain, testResult = containSubString(testResult, subRexString); !contain {
 		t.Error("结果内未包含" + subRexString)
