@@ -480,5 +480,4 @@ func TestObjectFillToObject_PtrToPtr(t *testing.T) {
 	if grade.Classes.Number != 156 {
 		t.Error("Map对象的classes字段age项填充错误")
 	}
-
 }
