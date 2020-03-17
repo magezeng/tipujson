@@ -19,7 +19,7 @@ type SliceHandler func(positions []string, fromSlice interface{}, directionSlice
 //该值类型为Slice时分几种情况特殊处理,情况分别如下:
 //1.Slice处理函数为nil时:按照一般情况进行处理
 //2.Slice处理函数不为nil时: 调用处理函数 得到两个变量分别为  覆盖结果和生效与否，如果该次处理结果为不生效，则该字段按照一般情况处理，否则将返回结果直接覆盖到目标字段
-func objectFillToObject(fromObject interface{}, directionObject interface{}, sliceHandler SliceHandler) (err error) {
+func ObjectFillToObject(fromObject interface{}, directionObject interface{}, sliceHandler SliceHandler) (err error) {
 	directionType := reflect.TypeOf(directionObject)
 	directionValue := reflect.ValueOf(directionObject)
 	fromType := reflect.TypeOf(fromObject)

@@ -29,7 +29,7 @@ func TestObjectFillToObject_MapToMap(t *testing.T) {
 		},
 	}
 	var grade map[string]interface{}
-	err := objectFillToObject(fromObject, &grade, func(position []string, fromSlice interface{}, directionSlice interface{}) (i interface{}, b bool) {
+	err := ObjectFillToObject(fromObject, &grade, func(position []string, fromSlice interface{}, directionSlice interface{}) (i interface{}, b bool) {
 		return
 	})
 	if err != nil {
@@ -86,7 +86,7 @@ func TestObjectFillToObject_MapToStruct(t *testing.T) {
 		},
 	}
 	grade := Grade{}
-	err := objectFillToObject(fromObject, &grade, func(position []string, fromSlice interface{}, directionSlice interface{}) (i interface{}, b bool) {
+	err := ObjectFillToObject(fromObject, &grade, func(position []string, fromSlice interface{}, directionSlice interface{}) (i interface{}, b bool) {
 		return
 	})
 	if err != nil {
@@ -133,7 +133,7 @@ func TestObjectFillToObject_MapToPtr(t *testing.T) {
 		},
 	}
 	var grade *Grade
-	err := objectFillToObject(fromObject, &grade, func(position []string, fromSlice interface{}, directionSlice interface{}) (i interface{}, b bool) {
+	err := ObjectFillToObject(fromObject, &grade, func(position []string, fromSlice interface{}, directionSlice interface{}) (i interface{}, b bool) {
 		return
 	})
 	if err != nil {
@@ -183,7 +183,7 @@ func TestObjectFillToObject_StructToStruct(t *testing.T) {
 		},
 	}
 	var grade Grade
-	err := objectFillToObject(fromObject, &grade, func(position []string, fromSlice interface{}, directionSlice interface{}) (i interface{}, b bool) {
+	err := ObjectFillToObject(fromObject, &grade, func(position []string, fromSlice interface{}, directionSlice interface{}) (i interface{}, b bool) {
 		return
 	})
 	if err != nil {
@@ -230,7 +230,7 @@ func TestObjectFillToObject_StructToMap(t *testing.T) {
 		},
 	}
 	var grade map[string]interface{}
-	err := objectFillToObject(fromObject, &grade, func(position []string, fromSlice interface{}, directionSlice interface{}) (i interface{}, b bool) {
+	err := ObjectFillToObject(fromObject, &grade, func(position []string, fromSlice interface{}, directionSlice interface{}) (i interface{}, b bool) {
 		return
 	})
 	if err != nil {
@@ -285,7 +285,7 @@ func TestObjectFillToObject_StructToPtr(t *testing.T) {
 		},
 	}
 	var grade *Grade
-	err := objectFillToObject(fromObject, &grade, func(position []string, fromSlice interface{}, directionSlice interface{}) (i interface{}, b bool) {
+	err := ObjectFillToObject(fromObject, &grade, func(position []string, fromSlice interface{}, directionSlice interface{}) (i interface{}, b bool) {
 		return
 	})
 	if err != nil {
@@ -338,7 +338,7 @@ func TestObjectFillToObject_SliceToSlice(t *testing.T) {
 		},
 	}
 	var grade []Grade
-	err := objectFillToObject(fromObject, &grade, func(position []string, fromSlice interface{}, directionSlice interface{}) (i interface{}, b bool) {
+	err := ObjectFillToObject(fromObject, &grade, func(position []string, fromSlice interface{}, directionSlice interface{}) (i interface{}, b bool) {
 		return
 	})
 	if err != nil {
@@ -390,7 +390,7 @@ func TestObjectFillToObject_SliceToPtr(t *testing.T) {
 		},
 	}
 	var grade *[]Grade
-	err := objectFillToObject(fromObject, &grade, func(position []string, fromSlice interface{}, directionSlice interface{}) (i interface{}, b bool) {
+	err := ObjectFillToObject(fromObject, &grade, func(position []string, fromSlice interface{}, directionSlice interface{}) (i interface{}, b bool) {
 		return
 	})
 	if err != nil {
@@ -444,7 +444,7 @@ func TestObjectFillToObject_PtrToPtr(t *testing.T) {
 		},
 	}
 	var grade *Grade
-	err := objectFillToObject(fromObject, &grade, func(position []string, fromSlice interface{}, directionSlice interface{}) (i interface{}, b bool) {
+	err := ObjectFillToObject(fromObject, &grade, func(position []string, fromSlice interface{}, directionSlice interface{}) (i interface{}, b bool) {
 		return
 	})
 	if err != nil {
